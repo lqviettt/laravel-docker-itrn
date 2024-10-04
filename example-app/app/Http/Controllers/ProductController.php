@@ -18,11 +18,20 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $search = $request->input('search');
+        $categoryId = $request->input('category_id');
+        // $name = $request->input('name');
 
-        if ($search) {
-            $product = Product::where('name', 'like', '%' . $search . '%')
-                ->orWhere('code', 'like', '%' . $search . '%')
-                ->orWhere('description', 'like', '%' . $search . '%')
+        if ($search || $categoryId) {
+            $product = Product::where(function ($query) use ($search) {
+                if ($search) {
+                    $query->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('code', 'like', '%' . $search . '%')
+                        ->orWhere('description', 'like', '%' . $search . '%');
+                }
+            })
+                ->when($categoryId, function ($query) use ($categoryId) {
+                    return $query->where('category_id', $categoryId);
+                })
                 ->select('id', 'name', 'code', 'description', 'price')
                 ->get();
         } else {
