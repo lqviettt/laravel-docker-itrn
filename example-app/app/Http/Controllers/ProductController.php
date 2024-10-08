@@ -27,13 +27,14 @@ class ProductController extends Controller
                     $query->where('name', 'like', '%' . $search . '%')
                         ->orWhere('code', 'like', '%' . $search . '%')
                         ->orWhere('description', 'like', '%' . $search . '%')
-                        ->orWhere('price', 'like', '%' . $search . '%');
+                        ->orWhere('price', 'like', '%' . $search . '%')
+                        ->orWhere('status', 'like', '%' . $search . '%');
                 }
             })
                 ->when($categoryId, function ($query) use ($categoryId) {
                     return $query->where('category_id', $categoryId);
                 })
-                ->select('id', 'name', 'code', 'category_id', 'description', 'price')
+                ->select('id', 'name', 'code', 'category_id', 'description', 'price', 'status')
                 ->get();
         } else {
             $product = Product::all()->makeHidden(['created_at', 'updated_at']);
@@ -56,6 +57,7 @@ class ProductController extends Controller
             "description" => ["required"],
             "code" => ["required"],
             "category_id" => ["required"],
+            "status" => ["required"]
         ]);
 
         $product = Product::query()->create($validateData);
@@ -92,6 +94,7 @@ class ProductController extends Controller
             "description" => ["required"],
             "code" => ["required"],
             "category_id" => ["required"],
+            "status" => ["required"]
         ]);
 
         $product = Product::query()->find($id)

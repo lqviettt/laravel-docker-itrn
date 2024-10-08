@@ -14,9 +14,17 @@ class CategoryController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $category = Category::all()->makeHidden(['created_at', 'updated_at']);
+        $search = $request->input('search');
+        if ($search) {
+            $category = Category::where('name', 'like', '%' . $search . '%')
+                ->orWhere('status', 'like', '%' . $search . '%')
+                ->select('id', 'name', 'status')
+                ->get();
+        } else {
+            $category = Category::all()->makeHidden(['created_at', 'updated_at']);
+        }
 
         return response()->json($category);
     }
@@ -30,7 +38,8 @@ class CategoryController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validateData = $request->validate([
-            "name" => ["required"]
+            "name" => ["required"],
+            "status" => ["required"]
         ]);
 
         $category = Category::query()->create($validateData);
@@ -61,7 +70,8 @@ class CategoryController extends Controller
     public function update(Request $request, string $id): JsonResponse
     {
         $validateData = $request->validate([
-            "name" => ["required"]
+            "name" => ["required"],
+            "status" => ["required"]
         ]);
 
         $category = Category::query()
