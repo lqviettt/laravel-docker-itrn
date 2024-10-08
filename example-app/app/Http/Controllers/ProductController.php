@@ -19,9 +19,9 @@ class ProductController extends Controller
     {
         $search = $request->input('search');
         $categoryId = $request->input('category_id');
-        // $name = $request->input('name');
+        $status = $request->input('status');
 
-        if ($search || $categoryId) {
+        if ($search || $categoryId || $status) {
             $product = Product::where(function ($query) use ($search) {
                 if ($search) {
                     $query->where('name', 'like', '%' . $search . '%')
@@ -33,6 +33,9 @@ class ProductController extends Controller
             })
                 ->when($categoryId, function ($query) use ($categoryId) {
                     return $query->where('category_id', $categoryId);
+                })
+                ->when($status, function ($query) use ($status){
+                    return $query->where('status', $status);
                 })
                 ->select('id', 'name', 'code', 'category_id', 'description', 'price', 'status')
                 ->get();
