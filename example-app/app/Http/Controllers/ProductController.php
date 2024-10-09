@@ -35,12 +35,11 @@ class ProductController extends Controller
             ->when($status, function ($query) use ($status) {
                 return $query->where('status', $status);
             })
-            ->select('id', 'name', 'code', 'category_id', 'description', 'price', 'status')
+            ->select('id', 'name', 'code', 'category_id', 'description', 'price', 'status', 'category_name')
             ->paginate($perPage);
 
         return response()->json($products->makeHidden(['created_at', 'updated_at']));
     }
-
 
     /**
      * store

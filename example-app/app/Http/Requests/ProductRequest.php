@@ -24,7 +24,6 @@ class ProductRequest extends FormRequest
         return [
             "name" => "required|string|max:32",
             "code" => "required|string|unique:products,code", 
-            // "code" => "required|string", 
             "category_id" => "required|exists:categories,id", 
             "description" => "nullable|string",
             "price" => "required|numeric", 
