@@ -10,7 +10,7 @@ class Product extends Model
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['name', 'price', 'description', 'code', 'category_id'];
+    protected $fillable = ['name', 'code', 'quantity', 'price', 'description',  'category_id', 'status'];
 
     public function category()
     {

@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Category;
-
+use App\Http\Requests\ProductRequest;
 
 class ProductController extends Controller
 {
@@ -20,11 +19,12 @@ class ProductController extends Controller
         $search = $request->input('search');
         $categoryId = $request->input('category_id');
         $status = $request->input('status');
+        $perPage = $request->input('per_page', 10);
 
-        $product = Product::query()
+        $products = Product::query()
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
-                    $query->where('name', 'like',  $search . '%')
+                    $query->where('name', 'like', $search . '%')
                         ->orWhere('code', 'like', $search . '%')
                         ->orWhere('price', 'like', '%' . $search . '%');
                 });
@@ -36,10 +36,11 @@ class ProductController extends Controller
                 return $query->where('status', $status);
             })
             ->select('id', 'name', 'code', 'category_id', 'description', 'price', 'status')
-            ->get();
+            ->paginate($perPage);
 
-        return response()->json($product->makeHidden(['created_at', 'updated_at']));
+        return response()->json($products->makeHidden(['created_at', 'updated_at']));
     }
+
 
     /**
      * store
@@ -47,17 +48,9 @@ class ProductController extends Controller
      * @param  Request $request
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(ProductRequest $request): JsonResponse
     {
-        $validateData = $request->validate([
-            "name" => ["required"],
-            "price" => ["required"],
-            "description" => ["required"],
-            "code" => ["required"],
-            "category_id" => ["required"],
-            "status" => ["required"]
-        ]);
-
+        $validateData = $request->validated();
         $product = Product::query()->create($validateData);
 
         return response()->json($product);
@@ -68,11 +61,9 @@ class ProductController extends Controller
      *
      * @return JsonResponse
      */
-    public function show(int $id): JsonResponse
+    public function show(Product $product): JsonResponse
     {
-        $product = Product::query()->find($id);
-        $category = Category::query()->find($product->category_id);
-        $product->category = $category;
+        $product->load('category');
 
         return response()->json($product);
     }
@@ -84,19 +75,10 @@ class ProductController extends Controller
      * @param  mixed $id
      * @return void
      */
-    public function update(Request $request, int $id): JsonResponse // Form Request validate
+    public function update(ProductRequest $request, Product $product): JsonResponse
     {
-        $validateData = $request->validate([
-            "name" => ["required"],
-            "price" => ["required"],
-            "description" => ["required"],
-            "code" => ["required"],
-            "category_id" => ["required"],
-            "status" => ["required"]
-        ]);
-
-        $product = Product::query()->find($id)
-            ->update($validateData);
+        $validateData = $request->validated();
+        $product->update($validateData);
 
         return response()->json($product);
     }
@@ -107,9 +89,8 @@ class ProductController extends Controller
      * @param  mixed $id
      * @return void
      */
-    public function destroy(int $id): JsonResponse
+    public function destroy(Product $product): JsonResponse
     {
-        $product = Product::query()->find($id);
         $product->delete();
 
         return response()->json($product);
