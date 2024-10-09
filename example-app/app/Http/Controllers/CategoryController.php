@@ -17,17 +17,21 @@ class CategoryController extends Controller
     public function index(Request $request): JsonResponse
     {
         $search = $request->input('search');
-        if ($search) {
-            $category = Category::where('name', 'like', '%' . $search . '%')
-                ->orWhere('status', 'like', '%' . $search . '%')
-                ->select('id', 'name', 'status')
-                ->get();
-        } else {
-            $category = Category::all()->makeHidden(['created_at', 'updated_at']);
-        }
-
-        return response()->json($category);
+        $status = $request->input('status');
+    
+        $category = Category::query()
+            ->when($search, function ($query) use ($search) {
+                return $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->when($status, function($query) use ($status){
+                return $query->where('status', 'like', '%' . $status . '%');
+            })
+            ->select('id', 'name', 'status')
+            ->get();
+    
+        return response()->json($category->makeHidden(['created_at', 'updated_at']));
     }
+    
 
     /**
      * store

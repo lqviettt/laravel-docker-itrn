@@ -21,29 +21,24 @@ class ProductController extends Controller
         $categoryId = $request->input('category_id');
         $status = $request->input('status');
 
-        if ($search || $categoryId || $status) {
-            $product = Product::where(function ($query) use ($search) {
-                if ($search) {
-                    $query->where('name', 'like', '%' . $search . '%')
-                        ->orWhere('code', 'like', '%' . $search . '%')
-                        ->orWhere('description', 'like', '%' . $search . '%')
-                        ->orWhere('price', 'like', '%' . $search . '%')
-                        ->orWhere('status', 'like', '%' . $search . '%');
-                }
+        $product = Product::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like',  $search . '%')
+                        ->orWhere('code', 'like', $search . '%')
+                        ->orWhere('price', 'like', '%' . $search . '%');
+                });
             })
-                ->when($categoryId, function ($query) use ($categoryId) {
-                    return $query->where('category_id', $categoryId);
-                })
-                ->when($status, function ($query) use ($status){
-                    return $query->where('status', $status);
-                })
-                ->select('id', 'name', 'code', 'category_id', 'description', 'price', 'status')
-                ->get();
-        } else {
-            $product = Product::all()->makeHidden(['created_at', 'updated_at']);
-        }
+            ->when($categoryId, function ($query) use ($categoryId) {
+                return $query->where('category_id', $categoryId);
+            })
+            ->when($status, function ($query) use ($status) {
+                return $query->where('status', $status);
+            })
+            ->select('id', 'name', 'code', 'category_id', 'description', 'price', 'status')
+            ->get();
 
-        return response()->json($product);
+        return response()->json($product->makeHidden(['created_at', 'updated_at']));
     }
 
     /**
@@ -52,7 +47,7 @@ class ProductController extends Controller
      * @param  Request $request
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse //From Request validate
+    public function store(Request $request): JsonResponse
     {
         $validateData = $request->validate([
             "name" => ["required"],
