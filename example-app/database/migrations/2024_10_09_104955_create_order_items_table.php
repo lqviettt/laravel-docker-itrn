@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->nullable()->constrained()->nullOnDelete(); 
             $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
-            $table->integer('quantity'); // Số lượng sản phẩm
-            $table->decimal('price', 10, 2); // Giá sản phẩm
-            $table->timestamps(); // Thời gian tạo và cập nhật
+            $table->integer('quantity'); 
+            $table->decimal('price', 10, 2); 
+            $table->timestamps(); 
         });
     }
 
