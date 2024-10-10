@@ -8,7 +8,7 @@ class CategoryRequest extends FormRequest
 {
     public function authorize()
     {
-        return true; // Cho phép tất cả người dùng gửi yêu cầu này
+        return true;
     }
 
     public function rules()

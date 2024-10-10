@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProductRequest extends FormRequest
 {
@@ -21,13 +22,21 @@ class ProductRequest extends FormRequest
      */
     public function rules(): array
     {
+        $productId = $this->route('product') ? $this->route('product')->id : null;
+
         return [
             "name" => "required|string|max:32",
-            "code" => "required|string|unique:products,code", 
-            "category_id" => "required|exists:categories,id", 
-            "description" => "nullable|string",
-            "price" => "required|numeric", 
-            "status" => "nullable|string", 
+            "code" => [
+                "required",
+                "string",
+                "max:20",
+                Rule::unique('products', 'code')->ignore($productId)
+            ],
+            "quantity" => "nullable|integer|min:0",
+            "category_id" => "required|exists:categories,id",
+            "description" => "nullable|string|max:255",
+            "price" => "required|integer",
+            "status" => "nullable|integer",
         ];
-    }    
+    }
 }

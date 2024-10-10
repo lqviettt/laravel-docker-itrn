@@ -17,7 +17,7 @@ class CategoryWithProductSeeder extends Seeder
         $categoryIds = $categories->pluck('id')->toArray();
 
         // Tạo số lượng sản phẩm mong muốn
-        $totalProducts = 10000; // Tổng số sản phẩm cần tạo
+        $totalProducts = 1000; // Tổng số sản phẩm cần tạo
 
         for ($i = 0; $i < $totalProducts; $i++) {
             // Chọn ngẫu nhiên một category_id từ danh sách đã lấy
