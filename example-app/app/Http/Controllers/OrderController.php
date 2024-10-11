@@ -131,18 +131,11 @@ class OrderController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Order updated successfully',
-                'order' => $order,
-            ]);
+            return response()->json($order->load('orderItem'));
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Error occurred: ' . $e->getMessage()
-            ], 500);
+            return response()->json($e->getMessage());
         }
     }
 
