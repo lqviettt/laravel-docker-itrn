@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\OrderRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderHistory;
 use Illuminate\Support\Facades\DB;
 
 
@@ -19,6 +21,7 @@ class OrderController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $code = $request->input('code');
         $status = $request->input('status');
         $search = $request->input('search');
         $productName = $request->input('productName');
@@ -30,6 +33,9 @@ class OrderController extends Controller
                         ->orWhere('customer_phone', 'like', $search . '%')
                         ->orWhere('shipping_address', 'like', '%' . $search . '%');
                 });
+            })
+            ->when($code, function ($query) use ($code) {
+                return $query->where('code', $code);
             })
             ->when($status, function ($query) use ($status) {
                 return $query->where('status', $status);
@@ -44,6 +50,7 @@ class OrderController extends Controller
             ->map(function ($order) {
                 return [
                     'id' => $order->id,
+                    'code' => $order->code,
                     'customer_name' => $order->customer_name,
                     'customer_phone' => $order->customer_phone,
                     'status' => $order->status,
@@ -52,6 +59,7 @@ class OrderController extends Controller
                         return [
                             'id' => $item->id,
                             'order_id' => $item->order_id,
+                            'product_id' => $item->product->id,
                             'product_name' => $item->product->name,
                             'quantity' => $item->quantity,
                             'price' => $item->price,
@@ -75,19 +83,24 @@ class OrderController extends Controller
             DB::beginTransaction();
 
             $order = Order::create([
+                'code' => $request->code,
                 'customer_name' => $request->customer_name,
                 'customer_phone' => $request->customer_phone,
                 'shipping_address' => $request->shipping_address,
-                'status' => $request->status
+                'status' => $request->status ?? 'default_status',
             ]);
 
             $orderItems = [];
             foreach ($request->order_items as $item) {
+                $product = Product::find($item['product_id']);
+
                 $orderItems[] = new OrderItem([
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
                 ]);
+                $product->quantity -= $item['quantity'];
+                $product->save();
             }
 
             $order->orderItem()->saveMany($orderItems);
@@ -128,26 +141,59 @@ class OrderController extends Controller
             DB::beginTransaction();
 
             $order->update([
+                'code' => $request->code,
                 'customer_name' => $request->customer_name,
                 'customer_phone' => $request->customer_phone,
                 'shipping_address' => $request->shipping_address,
                 'status' => $request->status,
             ]);
 
+            // Nếu trạng thái là "hủy", hoàn lại số lượng cho sản phẩm
+            if ($request->status === 'canceled') {
+                foreach ($order->orderItem as $item) {
+                    $product = Product::find($item['product_id']);
+
+                    if ($product) {
+                        $product->quantity += $item['quantity'];
+                        $product->save();
+                    }
+                }
+
+                OrderHistory::create([
+                    'order_id' => $order->id,
+                    'status' => 'canceled',
+                    'description' => 'Order has been canceled, stock returned.',
+                    'created_at' => now(),
+                ]);
+            }
+
             foreach ($request->order_items as $item) {
                 $orderItems = $order->orderItem()->where('product_id', $item['product_id'])->first();
 
                 if ($orderItems) {
+                    //So luong chenh lech = sl moi - sl cu
+                    $quantityDiff = $item['quantity'] - $orderItems->quantity;
+
                     $orderItems->update([
                         'quantity' => $item['quantity'],
                         'price' => $item['price'],
                     ]);
+
+                    $product = Product::find($item['product_id']);
+                    if ($product) {
+                        $product->quantity -= $quantityDiff;
+                        $product->save();
+                    }
                 } else {
                     $order->orderItem()->create([
                         'product_id' => $item['product_id'],
                         'quantity' => $item['quantity'],
                         'price' => $item['price'],
                     ]);
+
+                    $product = Product::find($item['product_id']);
+                    $product->quantity -= $item['quantity'];
+                    $product->save();
                 }
             }
 

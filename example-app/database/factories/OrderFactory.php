@@ -17,6 +17,7 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
+            'code' => $this->faker->unique()->numerify('COD#####'),
             'customer_name' => $this->faker->name,
             'customer_phone' => $this->faker->numerify('09########'),
             'status' => $this->faker->randomElement(['pending', 'shipping', 'delivered', 'canceled']),
