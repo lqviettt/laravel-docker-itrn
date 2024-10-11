@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-
 use App\Models\Category;
+use App\Http\Requests\CategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -14,11 +14,23 @@ class CategoryController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $category = Category::all()->makeHidden(['created_at', 'updated_at']);
+        $search = $request->input('search');
+        $status = $request->input('status');
+        $perPage = $request->input('per_page', 10);
 
-        return response()->json($category);
+        $category = Category::query()
+            ->when($search, function ($query) use ($search) {
+                return $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->when($status, function ($query) use ($status) {
+                return $query->where('status', 'like', '%' . $status . '%');
+            })
+            ->select('id', 'name', 'status')
+            ->paginate($perPage);
+
+        return response()->json($category->makeHidden(['created_at', 'updated_at']));
     }
 
     /**
@@ -27,12 +39,9 @@ class CategoryController extends Controller
      * @param  mixed $request
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(CategoryRequest $request): JsonResponse
     {
-        $validateData = $request->validate([
-            "name" => ["required"]
-        ]);
-
+        $validateData = $request->validated();
         $category = Category::query()->create($validateData);
 
         return response()->json($category);
@@ -41,12 +50,12 @@ class CategoryController extends Controller
     /**
      * show
      *
-     * @param  mixed $id
+     * @param  mixed $category
      * @return JsonResponse
      */
-    public function show(string $id): JsonResponse
+    public function show(Category $category): JsonResponse
     {
-        $category = Category::with('products')->find($id);
+        $category->load('product');
 
         return response()->json($category);
     }
@@ -58,15 +67,10 @@ class CategoryController extends Controller
      * @param  mixed $id
      * @return JsonResponse
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(CategoryRequest $request, Category $category): JsonResponse
     {
-        $validateData = $request->validate([
-            "name" => ["required"]
-        ]);
-
-        $category = Category::query()
-            ->find($id)
-            ->update($validateData);
+        $validateData = $request->validated();
+        $category->update($validateData);
 
         return response()->json($category);
     }
@@ -77,9 +81,8 @@ class CategoryController extends Controller
      * @param  mixed $id
      * @return JsonResponse
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(Category $category): JsonResponse
     {
-        $category = Category::query()->find($id);
         $category->delete();
 
         return response()->json($category);

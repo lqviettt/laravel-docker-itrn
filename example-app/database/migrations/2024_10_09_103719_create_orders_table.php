@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->id('id');
-            $table->string('name', 32);
-            $table->tinyInteger('status')->default(0);
+        Schema::create('orders', function (Blueprint $table) {
+            $table->id();
+            $table->string('customer_name', 32);
+            $table->string('customer_phone', 10);
+            $table->enum('status', ['pending', 'shipping', 'delivered', 'canceled'])->default('pending');
+            $table->string('shipping_address', 255);
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('orders');
     }
 };
