@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('customer_name', 32);
-            $table->string('customer_phone', 10)->unique();
+            $table->string('customer_phone', 10);
             $table->enum('status', ['pending', 'shipping', 'delivered', 'canceled'])->default('pending');
             $table->string('shipping_address', 255);
             $table->timestamps();

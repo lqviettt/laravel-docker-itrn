@@ -55,7 +55,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category): JsonResponse
     {
-        $category->load('products');
+        $category->load('product');
 
         return response()->json($category);
     }
