@@ -24,7 +24,7 @@ class ProductController extends Controller
         $products = Product::query()
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
-                    $query->where('name', 'like', $search . '%')
+                    $query->where('name', 'like','%'. $search . '%')
                         ->orWhere('code', 'like', $search . '%')
                         ->orWhere('price', 'like', '%' . $search . '%');
                 });
