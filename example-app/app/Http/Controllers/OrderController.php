@@ -138,7 +138,6 @@ class OrderController extends Controller
     public function update(OrderRequest $request, Order $order): JsonResponse
     {
         try {
-            // Kiểm tra trạng thái hiện tại của đơn hàng, nếu là hủy thì không cho phép cập nhật
             if ($order->status === 'canceled') {
                 return response()->json([
                     'error' => 'Cannot update an order that has been canceled.'
@@ -146,17 +145,13 @@ class OrderController extends Controller
             }
             DB::beginTransaction();
 
-            // Lưu lại thông tin chi tiết đơn hàng cũ
-            $oldOrderItems = $order->orderItem()->get();
-
-            // Cập nhật thông tin đơn hàng
+            // Cập nhật thông tin trạng thái
             $order->update([
-                'code' => $request->code,
-                'customer_name' => $request->customer_name,
-                'customer_phone' => $request->customer_phone,
-                'shipping_address' => $request->shipping_address,
                 'status' => $request->status,
             ]);
+
+            // Lưu lại thông tin chi tiết đơn hàng cũ
+            $oldOrderItems = $order->orderItem()->get();
 
             // Nếu trạng thái mới là "hủy", hoàn lại số lượng cho tất cả các sản phẩm cũ
             if ($request->status === 'canceled') {
@@ -179,6 +174,13 @@ class OrderController extends Controller
                 ]);
             } else {
                 // Nếu trạng thái không phải là "hủy", xử lý cập nhật thông tin sản phẩm
+                $order->update([
+                    'code' => $request->code,
+                    'customer_name' => $request->customer_name,
+                    'customer_phone' => $request->customer_phone,
+                    'shipping_address' => $request->shipping_address,
+                ]);
+
                 $oldItemsByProductId = $oldOrderItems->keyBy('product_id');
 
                 foreach ($request->order_items as $item) {
