@@ -42,4 +42,25 @@ class OrderRequest extends FormRequest
             'order_items.*.price' => 'required|integer',
         ];
     }
+
+    public function storeOrder()
+    {
+        return [
+            'code' => $this->code,
+            'customer_name' => $this->customer_name,
+            'customer_phone' => $this->customer_phone,
+            'shipping_address' => $this->shipping_address,
+            'status' => $this->status ?? 'default_status',
+        ];
+    }
+
+    public function updateOrder()
+    {
+        return [
+            'code' => $this->code,
+            'customer_name' => $this->customer_name,
+            'customer_phone' => $this->customer_phone,
+            'shipping_address' => $this->shipping_address
+        ];
+    }
 }
