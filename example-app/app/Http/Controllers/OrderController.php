@@ -52,44 +52,17 @@ class OrderController extends Controller
      */
     public function store(OrderRequest $request): JsonResponse
     {
-        try {
-            DB::beginTransaction();
-
+        return DB::transaction(function () use ($request) {
             $order = Order::create($request->storeOrder());
-            $productIds = collect($request->order_items)->pluck('product_id')->toArray();
-            $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
-
-            $orderItems = [];
-            $quantitiesToUpdate = [];
+            $order->products()->attach($request->order_items);
 
             foreach ($request->order_items as $item) {
-                $product = $products->get($item['product_id']);
-
-                if ($product) {
-                    $orderItems[] = [
-                        'product_id' => $item['product_id'],
-                        'quantity' => $item['quantity'],
-                        'price' => $item['price'],
-                    ];
-
-                    $quantitiesToUpdate[$item['product_id']] = $product->quantity - $item['quantity'];
-                }
+                $order->products()->where('products.id', $item['product_id'])
+                    ->decrement('products.quantity', $item['quantity']);
             }
-
-            foreach ($quantitiesToUpdate as $productId => $newQuantity) {
-                $products[$productId]->update(['quantity' => $newQuantity]);
-            }
-
-            $order->orderItem()->createMany($orderItems);
-
-            DB::commit();
 
             return response()->json($order);
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        }, 5);
     }
 
     /**
@@ -116,34 +89,30 @@ class OrderController extends Controller
     {
         if ($order->status === 'canceled') {
             return response()->json([
-                'error' => 'Cannot update an order that has been canceled.'
+                'error' => 'Cannot update a canceled order.'
             ], 400);
         }
 
         try {
-            DB::beginTransaction();
-            
-            $order->update(['status' => $request->status]);
-            $oldOrderItems = $order->orderItem()->with('product')->get();
-            $oldItemsByProductId = $oldOrderItems->keyBy('product_id');
-            $productIds = collect($request->order_items)->pluck('product_id');
-            $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+            DB::transaction(function () use ($request, $order) {
+                $order->update(['status' => $request->status]);
+                $oldItems = $order->orderItem()->with('product')->get();
+                $oldItemsByProductId = $oldItems->keyBy('product_id');
+                $orderItems = collect($request->order_items);
 
-            if ($request->status === 'canceled') {
-                OrderHelper::cancelOrder($order, $oldOrderItems);
-            } else {
-                $order->update($request->updateOrder());
-                OrderHelper::updateOrderItems($request, $oldItemsByProductId, $products, $order);
-                OrderHelper::removeDeletedItems($oldOrderItems, $request);
-            }
-
-            DB::commit();
+                if ($request->status === 'canceled') {
+                    OrderHelper::cancelOrder($order, $oldItems);
+                } else {
+                    $order->update($request->updateOrder());
+                    OrderHelper::updateOrderItems($orderItems, $oldItemsByProductId, $order);
+                    OrderHelper::removeDeletedItems($oldItems, $orderItems);
+                }
+            });
 
             return response()->json($order->load('orderItem'));
         } catch (\Exception $e) {
-            DB::rollBack();
 
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 

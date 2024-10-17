@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 
 class OrderRequest extends FormRequest
@@ -24,14 +25,16 @@ class OrderRequest extends FormRequest
     public function rules(): array
     {
         $orderId = $this->route('order') ? $this->route('order')->id : null;
-
+        $codeRule = $this->isMethod('POST') 
+        ? 'nullable|string|max:20'
+        : [
+            'required',
+            'string',
+            'max:20',
+            Rule::unique('orders', 'code')->ignore($orderId)
+        ];
         return [
-            "code" => [
-                "required",
-                "string",
-                "max:20",
-                Rule::unique('orders', 'code')->ignore($orderId)
-            ],
+            "code" => $codeRule,
             'customer_name' => 'required|string|max:32',
             'customer_phone' => 'required|string|max:10',
             'status' => 'required|in:pending,shipping,delivered,canceled',
@@ -46,7 +49,7 @@ class OrderRequest extends FormRequest
     public function storeOrder()
     {
         return [
-            'code' => $this->code,
+            'code' => Str::random(10),
             'customer_name' => $this->customer_name,
             'customer_phone' => $this->customer_phone,
             'shipping_address' => $this->shipping_address,
@@ -60,7 +63,7 @@ class OrderRequest extends FormRequest
             'code' => $this->code,
             'customer_name' => $this->customer_name,
             'customer_phone' => $this->customer_phone,
-            'shipping_address' => $this->shipping_address
+            'shipping_address' => $this->shipping_address,
         ];
     }
 }
