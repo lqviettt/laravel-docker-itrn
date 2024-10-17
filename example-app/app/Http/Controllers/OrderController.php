@@ -2,65 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FormatData;
+use App\Helpers\OrderHelper;
 use App\Http\Requests\OrderRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderHistory;
 use Illuminate\Support\Facades\DB;
-
 
 class OrderController extends Controller
 {
+    public function __construct(private FormatData $formatData) {}
+
     /**
      * index
      *
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request,): JsonResponse
     {
         $status = $request->input('status');
         $search = $request->input('search');
-        $productName = $request->input('productName');
 
         $order = Order::query()
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
-                    $query->where('customer_name', 'like', $search . '%')
-                        ->orWhere('customer_phone', 'like', $search . '%')
-                        ->orWhere('shipping_address', 'like', '%' . $search . '%');
+                    $query->where('customer_name', 'like', '%' . $search . '%')
+                        ->orWhere('customer_phone', 'like', '%' . $search . '%')
+                        ->orWhere('code', 'like',  $search . '%');
                 });
             })
             ->when($status, function ($query) use ($status) {
                 return $query->where('status', $status);
             })
-            ->when($productName, function ($query) use ($productName) {
-                return $query->whereHas('orderItem.product', function ($query) use ($productName) {
-                    $query->where('name', 'like', '%' . $productName . '%');
-                });
-            })
             ->with('orderItem.product')
-            ->get()
-            ->map(function ($order) {
-                return [
-                    'id' => $order->id,
-                    'customer_name' => $order->customer_name,
-                    'customer_phone' => $order->customer_phone,
-                    'status' => $order->status,
-                    'shipping_address' => $order->shipping_address,
-                    'order_item' => $order->orderItem->map(function ($item) {
-                        return [
-                            'id' => $item->id,
-                            'order_id' => $item->order_id,
-                            'product_name' => $item->product->name,
-                            'quantity' => $item->quantity,
-                            'price' => $item->price,
-                        ];
-                    }),
-                ];
-            });
+            ->get();
 
-        return response()->json($order);
+        return response()->json($this->formatData->formatData($order));
     }
 
     /**
@@ -71,35 +52,17 @@ class OrderController extends Controller
      */
     public function store(OrderRequest $request): JsonResponse
     {
-        try {
-            DB::beginTransaction();
+        return DB::transaction(function () use ($request) {
+            $order = Order::create($request->storeOrder());
+            $order->products()->attach($request->order_items);
 
-            $order = Order::create([
-                'customer_name' => $request->customer_name,
-                'customer_phone' => $request->customer_phone,
-                'shipping_address' => $request->shipping_address,
-                'status' => $request->status
-            ]);
-
-            $orderItems = [];
             foreach ($request->order_items as $item) {
-                $orderItems[] = new OrderItem([
-                    'product_id' => $item['product_id'],
-                    'quantity' => $item['quantity'],
-                    'price' => $item['price'],
-                ]);
+                $order->products()->where('products.id', $item['product_id'])
+                    ->decrement('products.quantity', $item['quantity']);
             }
 
-            $order->orderItem()->saveMany($orderItems);
-
-            DB::commit();
-
             return response()->json($order);
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return response()->json($e->getMessage());
-        }
+        }, 5);
     }
 
     /**
@@ -124,40 +87,32 @@ class OrderController extends Controller
      */
     public function update(OrderRequest $request, Order $order): JsonResponse
     {
+        if ($order->status === 'canceled') {
+            return response()->json([
+                'error' => 'Cannot update a canceled order.'
+            ], 400);
+        }
+
         try {
-            DB::beginTransaction();
+            DB::transaction(function () use ($request, $order) {
+                $order->update(['status' => $request->status]);
+                $oldItems = $order->orderItem()->with('product')->get();
+                $oldItemsByProductId = $oldItems->keyBy('product_id');
+                $orderItems = collect($request->order_items);
 
-            $order->update([
-                'customer_name' => $request->customer_name,
-                'customer_phone' => $request->customer_phone,
-                'shipping_address' => $request->shipping_address,
-                'status' => $request->status,
-            ]);
-
-            foreach ($request->order_items as $item) {
-                $orderItems = $order->orderItem()->where('product_id', $item['product_id'])->first();
-
-                if ($orderItems) {
-                    $orderItems->update([
-                        'quantity' => $item['quantity'],
-                        'price' => $item['price'],
-                    ]);
+                if ($request->status === 'canceled') {
+                    OrderHelper::cancelOrder($order, $oldItems);
                 } else {
-                    $order->orderItem()->create([
-                        'product_id' => $item['product_id'],
-                        'quantity' => $item['quantity'],
-                        'price' => $item['price'],
-                    ]);
+                    $order->update($request->updateOrder());
+                    OrderHelper::updateOrderItems($orderItems, $oldItemsByProductId, $order);
+                    OrderHelper::removeDeletedItems($oldItems, $orderItems);
                 }
-            }
-
-            DB::commit();
+            });
 
             return response()->json($order->load('orderItem'));
         } catch (\Exception $e) {
-            DB::rollBack();
 
-            return response()->json($e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 

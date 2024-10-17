@@ -11,6 +11,7 @@ class Product extends Model
 
     protected $primaryKey = 'id';
     protected $fillable = ['name', 'code', 'quantity', 'price', 'description',  'category_id', 'status'];
+    public $timestamps = false;
 
     public function category()
     {
@@ -20,5 +21,11 @@ class Product extends Model
     public function orderItem()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_items', 'product_id', 'order_id')
+            ->withPivot('quantity', 'price');
     }
 }

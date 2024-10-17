@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('id');
             $table->string('name', 32);
             $table->string('code', 20)->unique();
-            $table->tinyInteger('quantity')->default(0);
+            $table->smallInteger('quantity')->default(0);
             $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->string('description', 255)->nullable();
             $table->integer('price')->unsigned(); 
