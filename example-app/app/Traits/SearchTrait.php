@@ -32,7 +32,8 @@ trait SearchTrait
             case 'order':
                 $query->when($search, function ($query) use ($search) {
                     return $query->where(function ($query) use ($search) {
-                        $query->where('customer_name', 'like', '%' . $search . '%')
+                        $query->where('lastname', 'like',  $search . '%')
+                            ->orWhere('firstname', 'like',   $search . '%')
                             ->orWhere('customer_phone', 'like', '%' . $search . '%')
                             ->orWhere('code', 'like', '%' . $search . '%');
                     });

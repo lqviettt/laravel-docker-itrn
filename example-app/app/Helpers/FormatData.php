@@ -25,7 +25,7 @@ class FormatData
                 'id' => $order->id,
                 'code' => $order->code,
                 'created_by' => $order->created_by,
-                'customer_name' => $order->customer_name,
+                'customer_name' => $order->lastname . ' ' . $order->firstname,
                 'customer_phone' => $order->customer_phone,
                 'status' => $order->status,
                 'shipping_address' => $order->shipping_address,

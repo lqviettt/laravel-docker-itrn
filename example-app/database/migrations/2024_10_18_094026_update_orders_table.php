@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('created_by')->after('code')->index()->nullable(); 
+            $table->string('firstname', 32)->after('id')->index();
+            $table->string('lastname', 32)->after('firstname')->index(); 
+
+            $table->dropIndex(['customer_name']);
+            $table->dropColumn('customer_name');
         });
     }
 
@@ -22,7 +26,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('created_by');
+            $table->string('customer_name', 32)->after('id')->index();
+            $table->dropColumn(['firstname', 'lastname']);
         });
     }
 };

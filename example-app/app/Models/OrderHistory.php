@@ -11,4 +11,9 @@ class OrderHistory extends Model
 
     protected $primaryKey = 'id';
     protected $fillable = ['order_id', 'status', 'description'];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

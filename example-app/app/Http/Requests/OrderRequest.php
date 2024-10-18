@@ -25,14 +25,14 @@ class OrderRequest extends FormRequest
     public function rules(): array
     {
         $orderId = $this->route('order') ? $this->route('order')->id : null;
-        $codeRule = $this->isMethod('POST') 
-        ? 'nullable|string|max:20'
-        : [
-            'required',
-            'string',
-            'max:20',
-            Rule::unique('orders', 'code')->ignore($orderId)
-        ];
+        $codeRule = $this->isMethod('POST')
+            ? 'nullable|string|max:20'
+            : [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('orders', 'code')->ignore($orderId)
+            ];
         return [
             "code" => $codeRule,
             'customer_name' => 'required|string|max:32',
@@ -48,9 +48,14 @@ class OrderRequest extends FormRequest
 
     public function storeOrder()
     {
+        $nameParts = explode(' ', $this->customer_name);
+        $firstname = array_pop($nameParts); 
+        $lastname = implode(' ', $nameParts);
+
         return [
             'code' => Str::random(10),
-            'customer_name' => $this->customer_name,
+            'firstname' => $firstname,
+            'lastname' => $lastname,
             'created_by' => $this->user()->user_name,
             'customer_phone' => $this->customer_phone,
             'shipping_address' => $this->shipping_address,
@@ -60,9 +65,15 @@ class OrderRequest extends FormRequest
 
     public function updateOrder()
     {
+        $nameParts = explode(' ', $this->customer_name);
+        $firstname = array_pop($nameParts); 
+        $lastname = implode(' ', $nameParts);
+
         return [
             'code' => $this->code,
-            'customer_name' => $this->customer_name,
+            'firstname' => $firstname,
+            'lastname' => $lastname,
+            'created_by' => $this->user()->user_name,
             'customer_phone' => $this->customer_phone,
             'shipping_address' => $this->shipping_address,
         ];

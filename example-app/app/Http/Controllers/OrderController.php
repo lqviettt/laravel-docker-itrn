@@ -92,7 +92,6 @@ class OrderController extends Controller
 
                 if ($request->status === 'canceled') {
                     OrderHelper::cancelOrder($order, $oldItems);
-                    $order->logs()->create(['status' => 'cancel']);
                 } else {
                     $order->update($request->updateOrder());
                     OrderHelper::updateOrderItems($orderItems, $oldItemsByProductId, $order);
