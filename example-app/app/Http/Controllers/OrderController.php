@@ -7,14 +7,13 @@ use App\Helpers\OrderHelper;
 use App\Http\Requests\OrderRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Product;
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\OrderHistory;
 use Illuminate\Support\Facades\DB;
+use App\Traits\SearchTrait;
 
 class OrderController extends Controller
 {
+    use SearchTrait;
     public function __construct(private FormatData $formatData) {}
 
     /**
@@ -22,22 +21,13 @@ class OrderController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(Request $request,): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $status = $request->input('status');
         $search = $request->input('search');
+        $created_by = $request->input('created_by');
 
-        $order = Order::query()
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($query) use ($search) {
-                    $query->where('customer_name', 'like', '%' . $search . '%')
-                        ->orWhere('customer_phone', 'like', '%' . $search . '%')
-                        ->orWhere('code', 'like',  $search . '%');
-                });
-            })
-            ->when($status, function ($query) use ($status) {
-                return $query->where('status', $status);
-            })
+        $order = $this->applySearch(Order::query(), $search, $status, null, $created_by, 'order')
             ->with('orderItem.product')
             ->get();
 
@@ -102,6 +92,7 @@ class OrderController extends Controller
 
                 if ($request->status === 'canceled') {
                     OrderHelper::cancelOrder($order, $oldItems);
+                    $order->logs()->create(['status' => 'cancel']);
                 } else {
                     $order->update($request->updateOrder());
                     OrderHelper::updateOrderItems($orderItems, $oldItemsByProductId, $order);

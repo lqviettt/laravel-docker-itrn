@@ -51,6 +51,7 @@ class OrderRequest extends FormRequest
         return [
             'code' => Str::random(10),
             'customer_name' => $this->customer_name,
+            'created_by' => $this->user()->user_name,
             'customer_phone' => $this->customer_phone,
             'shipping_address' => $this->shipping_address,
             'status' => $this->status ?? 'default_status',
