@@ -2,16 +2,22 @@
 
 namespace App\Http\Middleware;
 
+use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
-use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class Authenticate extends Middleware
 {
-    /**
-     * Get the path the user should be redirected to when they are not authenticated.
-     */
-    protected function redirectTo(Request $request): ?string
+    public function handle($request, Closure $next, ...$guards)
     {
-        return $request->expectsJson() ? null : route('login');
+        try {
+            if (!$request->user()) {
+                return response()->json(['error' => 'Unauthorized: Token is missing or invalid'], 401);
+            }
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Unauthorized: ' . $e->getMessage()], 401);
+        }
+
+        return $next($request);
     }
 }
