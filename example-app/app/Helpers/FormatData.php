@@ -3,8 +3,8 @@
 namespace App\Helpers;
 
 use App\Models\Order;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class FormatData
 {
@@ -14,8 +14,12 @@ class FormatData
      * @param  Order $order
      * @return array
      */
-    public function formatData(Collection $orders): SupportCollection
+    public function formatData($orders): SupportCollection
     {
+        if ($orders instanceof LengthAwarePaginator) {
+            $orders = $orders->getCollection(); 
+        }
+
         return $orders->map(function ($order) {
             return [
                 'id' => $order->id,

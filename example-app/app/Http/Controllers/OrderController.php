@@ -29,7 +29,7 @@ class OrderController extends Controller
 
         $order = $this->applySearch(Order::query(), $search, $status, null, $created_by, 'order')
             ->with('orderItem.product')
-            ->get();
+            ->paginate(5);
 
         return response()->json($this->formatData->formatData($order));
     }

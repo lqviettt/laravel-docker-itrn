@@ -22,12 +22,11 @@ class ProductController extends Controller
         $search = $request->input('search');
         $categoryId = $request->input('category_id');
         $status = $request->input('status');
-        $perPage = $request->input('per_page', 10);
-            
+
         $products = $this->applySearch(Product::query(), $search, $status, $categoryId, null, 'product')
             ->with('category:id,name')
             ->select('id', 'name', 'code', 'quantity', 'category_id', 'description', 'price', 'status',)
-            ->paginate($perPage);
+            ->paginate(10);
 
         return response()->json($products->makeHidden(['created_at', 'updated_at']));
     }
