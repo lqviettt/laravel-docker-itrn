@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\Category;
 use App\Http\Requests\CategoryRequest;
+use App\Traits\SearchTrait;
 
 class CategoryController extends Controller
 {
+    use SearchTrait;
+
     /**
      * index
      *
@@ -18,17 +21,10 @@ class CategoryController extends Controller
     {
         $search = $request->input('search');
         $status = $request->input('status');
-        $perPage = $request->input('per_page', 10);
 
-        $category = Category::query()
-            ->when($search, function ($query) use ($search) {
-                return $query->where('name', 'like', '%' . $search . '%');
-            })
-            ->when($status, function ($query) use ($status) {
-                return $query->where('status', 'like', '%' . $status . '%');
-            })
+        $category = $this->applySearch(Category::query(), $search, $status, null, null, 'category')
             ->select('id', 'name', 'status')
-            ->paginate($perPage);
+            ->paginate(10);
 
         return response()->json($category->makeHidden(['created_at', 'updated_at']));
     }

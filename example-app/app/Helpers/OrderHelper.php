@@ -13,11 +13,9 @@ class OrderHelper
             $item->product->increment('quantity', $item->quantity);
         });
 
-        OrderHistory::create([
-            'order_id' => $order->id,
+        $order->logs()->create([
             'status' => 'canceled',
             'description' => 'Order has been canceled, stock returned.',
-            'created_at' => now(),
         ]);
     }
 

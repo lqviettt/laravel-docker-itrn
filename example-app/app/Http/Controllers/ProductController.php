@@ -6,9 +6,12 @@ use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
+use App\Traits\SearchTrait;
 
 class ProductController extends Controller
 {
+    use SearchTrait;
+
     /**
      * index
      *
@@ -19,25 +22,11 @@ class ProductController extends Controller
         $search = $request->input('search');
         $categoryId = $request->input('category_id');
         $status = $request->input('status');
-        $perPage = $request->input('per_page', 10);
 
-        $products = Product::query()
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($query) use ($search) {
-                    $query->where('name', 'like','%'. $search . '%')
-                        ->orWhere('code', 'like', $search . '%')
-                        ->orWhere('price', 'like', '%' . $search . '%');
-                });
-            })
-            ->when($categoryId, function ($query) use ($categoryId) {
-                return $query->where('category_id', $categoryId);
-            })
-            ->when($status, function ($query) use ($status) {
-                return $query->where('status', $status);
-            })
+        $products = $this->applySearch(Product::query(), $search, $status, $categoryId, null, 'product')
             ->with('category:id,name')
             ->select('id', 'name', 'code', 'quantity', 'category_id', 'description', 'price', 'status',)
-            ->paginate($perPage);
+            ->paginate(10);
 
         return response()->json($products->makeHidden(['created_at', 'updated_at']));
     }
