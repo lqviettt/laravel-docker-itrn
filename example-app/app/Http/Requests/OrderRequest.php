@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
-
 class OrderRequest extends FormRequest
 {
     /**
@@ -56,7 +55,6 @@ class OrderRequest extends FormRequest
             'code' => Str::random(10),
             'firstname' => $firstname,
             'lastname' => $lastname,
-            'created_by' => $this->user()->user_name,
             'customer_phone' => $this->customer_phone,
             'shipping_address' => $this->shipping_address,
             'status' => $this->status ?? 'default_status',
@@ -73,9 +71,10 @@ class OrderRequest extends FormRequest
             'code' => $this->code,
             'firstname' => $firstname,
             'lastname' => $lastname,
-            'created_by' => $this->user()->user_name,
             'customer_phone' => $this->customer_phone,
             'shipping_address' => $this->shipping_address,
+            'status' => $this->status,
+            'order_items' => $this->order_items
         ];
     }
 }

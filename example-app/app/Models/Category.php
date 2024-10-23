@@ -16,4 +16,16 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+    public function scopeSearchName($query, $search)
+    {
+        return $query->where(function ($query) use ($search) {
+            $query->where('name', 'LIKE', '%' . $search . '%');
+        });
+    }
+
+    public function scopeStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
 }

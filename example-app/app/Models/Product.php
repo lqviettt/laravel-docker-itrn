@@ -28,4 +28,22 @@ class Product extends Model
         return $this->belongsToMany(Order::class, 'order_items', 'product_id', 'order_id')
             ->withPivot('quantity', 'price');
     }
+
+    public function scopeStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+
+    public function scopeCategoryId($query, $category_id)
+    {
+        return $query->where('category_id', $category_id);
+    }
+
+    public function scopeSearchNameCode($query, $search)
+    {
+        return $query->where(function ($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                ->orwhere('code', 'like'. $search . '%');
+        });
+    }
 }
