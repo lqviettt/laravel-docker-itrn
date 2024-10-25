@@ -46,28 +46,25 @@ class Order extends BaseModel
         });
     }
 
-    public function scopeCreatedBy($query, $created_by)
+    public function scopeSearchByNameCode($query, $search)
     {
-        return $query->where('created_by', $created_by);
+        return $query->when(
+            !is_null($search),
+            fn($query) => $query->where(function ($query) use ($search) {
+                $query->where('lastname', 'like', $search . '%')
+                    ->orWhere('firstname', 'like', $search . '%')
+                    ->orWhere('code', 'like', $search . '%');
+            })
+        );
     }
 
-    public function scopeSearchNameCodePhone($query, $search)
+    public function scopeSearchByPhone($query, $phone)
     {
-        return $query->where(function ($query) use ($search) {
-            $query->where('lastname', 'like', $search . '%')
-                ->orWhere('firstname', 'like', $search . '%')
-                ->orwhere('code', 'like', $search . '%')
-                ->orwhere('customer_phone', 'like', '%' . $search . '%');
-        });
+        return $query->when(
+            !is_null($phone),
+            fn($query) => $query->where(function ($query) use ($phone) {
+                $query->where('customer_phone', 'like', '%' . $phone . '%');
+            })
+        );
     }
-
-    // public function scopePhone($query, $search)
-    // {
-    //     return $query->where('customer_phone', 'like', '%' . $search . '%');
-    // }
-
-    // public function scopeCode($query, $search)
-    // {
-    //     return $query->where('code', 'like', '%' . $search . '%');
-    // }
 }

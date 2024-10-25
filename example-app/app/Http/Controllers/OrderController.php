@@ -12,22 +12,31 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    protected $orderRepository;
+    /**
+     * __construct
+     *
+     * @param  OrderRepositoryInterface $orderRepository
+     * @return void
+     */
+    public function __construct(protected OrderRepositoryInterface $orderRepository) {}
 
-    public function __construct(OrderRepositoryInterface $orderRepository)
-    {
-        $this->orderRepository = $orderRepository;
-    }
-
+    /**
+     * index
+     *
+     * @param  Request $request
+     * @param  FormatData $formatData
+     * @return void
+     */
     public function index(Request $request, FormatData $formatData)
     {
-        $status = $request->input('status');
-        $search = $request->input('search');
-        $created_by = $request->input('created_by');
+        $query = $this->orderRepository
+            ->builderQuery()
+            ->searchByStatus($request->status)
+            ->searchByNameCode($request->search)
+            ->searchByPhone($request->phone)
+            ->searchByCreated($request->created_by);
 
-        $order = $this->orderRepository->select($search, $status, $created_by);
-
-        return response()->json($formatData->formatData($order));
+        return response()->json($formatData->formatData($query->paginate(10)));
     }
 
     /**
@@ -55,7 +64,7 @@ class OrderController extends Controller
     public function show(Order $order): JsonResponse
     {
         $order = $this->orderRepository->find($order);
-         
+
         return response()->json($order);
     }
 

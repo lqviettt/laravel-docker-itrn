@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 interface OrderRepositoryInterface
 {
-    public function select($search, $status, $created_by);
+    public function builderQuery();
 
     public function createOrder(array $orderData, array $orderItems);
 

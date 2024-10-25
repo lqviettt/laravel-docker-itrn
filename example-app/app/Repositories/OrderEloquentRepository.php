@@ -19,20 +19,9 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
         return Order::class;
     }
 
-    public function select($search, $status, $created_by)
+    public function builderQuery()
     {
-        $query = $this->_model::query()->with('orderItem.product');
-
-        return $query->when($search, function ($query, $search) {
-            return $query->searchNameCodePhone($search);
-        })
-            ->when($status, function ($query, $status) {
-                return $query->status($status);
-            })
-            ->when($created_by, function ($query, $created_by) {
-                return $query->createdBy($created_by);
-            })
-            ->paginate(10);
+        return $this->_model::query()->with('orderItem.product');
     }
 
     public function createOrder(array $orderData, array $orderItems)

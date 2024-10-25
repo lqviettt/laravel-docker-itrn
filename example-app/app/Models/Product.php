@@ -28,16 +28,19 @@ class Product extends BaseModel
             ->withPivot('quantity', 'price');
     }
 
-    public function scopeCategoryId($query, $category_id)
+    public function scopeSearchByCategory($query, $category)
     {
-        return $query->where('category_id', $category_id);
+        return $query->where('category_id', $category);
     }
 
-    public function scopeSearchNameCode($query, $search)
+    public function scopeSearchByNameCode($query, $search)
     {
-        return $query->where(function ($query) use ($search) {
-            $query->where('name', 'like', '%' . $search . '%')
-                ->orwhere('code', 'like', $search . '%');
-        });
+        return $query->when(
+            !is_null($search),
+            fn($query) => $query->where(function ($query) use ($search) {
+                $query->where('name', 'like','%' . $search . '%')
+                    ->orWhere('code', 'like', $search . '%');
+            })
+        );
     }
 }

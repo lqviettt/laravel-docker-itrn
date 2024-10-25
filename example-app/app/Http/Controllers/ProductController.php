@@ -10,18 +10,13 @@ use App\Repositories\ProductRepositoryInterface;
 
 class ProductController extends Controller
 {
-    protected $productRepository;
-    
     /**
      * __construct
      *
-     * @param  mixed $productRepository
+     * @param  ProductRepositoryInterface $productRepository
      * @return void
      */
-    public function __construct(ProductRepositoryInterface $productRepository)
-    {
-        return $this->productRepository = $productRepository;
-    }
+    public function __construct(protected ProductRepositoryInterface $productRepository) {}
 
     /**
      * index
@@ -30,13 +25,12 @@ class ProductController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $search = $request->input('search');
-        $category_id = $request->input('category_id');
-        $status = $request->input('status');
 
-        $products = $this->productRepository->select($search, $status, $category_id);
+        $query = $this->productRepository
+            ->builderQuery()
+            ->searchByNameCode($request->search);
 
-        return response()->json($products->makeHidden(['created_at', 'updated_at']));
+        return response()->json($query->paginate(10)->makeHidden(['created_at', 'updated_at']));
     }
 
     /**
@@ -61,7 +55,7 @@ class ProductController extends Controller
     public function show(Product $product): JsonResponse
     {
         $product = $this->productRepository->find($product);
-        
+
         return response()->json($product);
     }
 
@@ -88,7 +82,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): JsonResponse
     {
-        $product = $this->productRepository->delete($product);
+        $product->delete();
 
         return response()->json($product);
     }
