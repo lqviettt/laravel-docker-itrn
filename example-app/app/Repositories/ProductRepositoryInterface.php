@@ -2,17 +2,14 @@
 
 namespace App\Repositories;
 
-use App\Models\Product;
+use Illuminate\Database\Eloquent\Model;
 
 interface ProductRepositoryInterface
 {
-    public function all($search, $status, $category_id);
 
-    public function create(array $data);
+    public function select($search, $status, $category_id);
 
-    public function find(Product $product);
+    public function getProductByCategory();
 
-    public function update(Product $product, array $data);
-    
-    public function delete(Product $product);
+    public function find(Model $model);
 }

@@ -12,11 +12,6 @@ class OrderHelper
         $oldOrderItems->each(function ($item) {
             $item->product->increment('quantity', $item->quantity);
         });
-
-        $order->logs()->create([
-            'status' => 'canceled',
-            'description' => 'Order has been canceled, stock returned.',
-        ]);
     }
 
     public static function updateOrderItems($orderItems, $oldItemsByProductId, $order)

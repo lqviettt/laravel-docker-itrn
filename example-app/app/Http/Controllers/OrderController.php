@@ -25,7 +25,7 @@ class OrderController extends Controller
         $search = $request->input('search');
         $created_by = $request->input('created_by');
 
-        $order = $this->orderRepository->all($search, $status, $created_by);
+        $order = $this->orderRepository->select($search, $status, $created_by);
 
         return response()->json($formatData->formatData($order));
     }
@@ -40,7 +40,7 @@ class OrderController extends Controller
     {
         return DB::transaction(function () use ($request) {
             $order = $this->orderRepository
-                ->create($request->storeOrder(), $request->order_items);
+                ->createOrder($request->storeOrder(), $request->order_items);
 
             return response()->json($order);
         });
@@ -55,7 +55,7 @@ class OrderController extends Controller
     public function show(Order $order): JsonResponse
     {
         $order = $this->orderRepository->find($order);
-
+         
         return response()->json($order);
     }
 
@@ -76,7 +76,7 @@ class OrderController extends Controller
 
         try {
             DB::transaction(function () use ($request, $order) {
-                $this->orderRepository->update($order, $request->updateOrder());
+                $this->orderRepository->updateOrder($order, $request->updateOrder());
             });
 
             return response()->json($order->load('orderItem'));
@@ -89,7 +89,7 @@ class OrderController extends Controller
     /**
      * destroy
      *
-     * @param  mixed $order
+     * @param  mixed $id
      * @return JsonResponse
      */
     public function destroy(Order $order): JsonResponse

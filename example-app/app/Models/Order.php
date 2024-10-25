@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class Order extends Model
+class Order extends BaseModel
 {
     use HasFactory;
 
@@ -37,12 +36,14 @@ class Order extends Model
 
         static::updating(function ($order) {
             $order->created_by = Auth::user()->user_name;
-        });
-    }
 
-    public function scopeStatus($query, $status)
-    {
-        return $query->where('status', $status);
+            if ($order->status === 'canceled') {
+                $order->logs()->create([
+                    'status' => 'canceled',
+                    'description' => 'Order has been canceled, stock returned.',
+                ]);
+            }
+        });
     }
 
     public function scopeCreatedBy($query, $created_by)
@@ -53,13 +54,13 @@ class Order extends Model
     public function scopeSearchNameCodePhone($query, $search)
     {
         return $query->where(function ($query) use ($search) {
-            $query->where('lastname', 'like',  $search . '%')
-                ->orWhere('firstname', 'like',   $search . '%')
-                ->orwhere('code', 'like', '%' . $search . '%')
+            $query->where('lastname', 'like', $search . '%')
+                ->orWhere('firstname', 'like', $search . '%')
+                ->orwhere('code', 'like', $search . '%')
                 ->orwhere('customer_phone', 'like', '%' . $search . '%');
         });
     }
-    
+
     // public function scopePhone($query, $search)
     // {
     //     return $query->where('customer_phone', 'like', '%' . $search . '%');

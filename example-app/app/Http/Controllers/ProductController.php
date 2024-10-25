@@ -31,10 +31,10 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $search = $request->input('search');
-        $categoryId = $request->input('category_id');
+        $category_id = $request->input('category_id');
         $status = $request->input('status');
 
-        $products = $this->productRepository->all($search, $status, $categoryId);
+        $products = $this->productRepository->select($search, $status, $category_id);
 
         return response()->json($products->makeHidden(['created_at', 'updated_at']));
     }
@@ -61,8 +61,7 @@ class ProductController extends Controller
     public function show(Product $product): JsonResponse
     {
         $product = $this->productRepository->find($product);
-        $product->load('category');
-
+        
         return response()->json($product);
     }
 

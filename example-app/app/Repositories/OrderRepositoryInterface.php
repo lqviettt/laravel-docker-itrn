@@ -2,17 +2,17 @@
 
 namespace App\Repositories;
 
-use App\Models\Order;
+use Illuminate\Database\Eloquent\Model;
 
 interface OrderRepositoryInterface
 {
-    public function all($search, $status, $created_by);
+    public function select($search, $status, $created_by);
 
-    public function create(array $orderData, array $orderItems);
+    public function createOrder(array $orderData, array $orderItems);
 
-    public function find(Order $order);
+    public function updateOrder(Model $model, array $data);
 
-    public function update(Order $order, array $data);
-    
-    public function delete(Order $order);
+    public function delete(Model $model);
+
+    public function find(Model $model);
 }
