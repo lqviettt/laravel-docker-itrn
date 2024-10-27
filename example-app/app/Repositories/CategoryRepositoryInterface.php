@@ -2,17 +2,11 @@
 
 namespace App\Repositories;
 
-use App\Models\Category;
+use Illuminate\Database\Eloquent\Model;
 
 interface CategoryRepositoryInterface
-{
-    public function all($search, $status);
+{    
+    public function select($search, $status);
 
-    public function create(array $data);
-
-    public function find(Category $category);
-
-    public function update(Category $category, array $data);
-    
-    public function delete(Category $category);
+    public function find(Model $model);
 }

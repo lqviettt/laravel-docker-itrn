@@ -33,7 +33,7 @@ class CategoryController extends Controller
         $search = $request->input('search');
         $status = $request->input('status');
 
-        $category = $this->categoryRepository->all($search, $status);
+        $category = $this->categoryRepository->select($search, $status);
 
         return response()->json($category->makeHidden(['created_at', 'updated_at']));
     }
@@ -61,12 +61,8 @@ class CategoryController extends Controller
     public function show(Category $category): JsonResponse
     {
         $category = $this->categoryRepository->find($category);
-        $products = $category->product()->limit(10)->get();
 
-        return response()->json([
-            'category' => $category,
-            'products' => $products
-        ]);
+        return response()->json($category);
     }
 
     /**
@@ -79,7 +75,7 @@ class CategoryController extends Controller
     public function update(CategoryRequest $request, Category $category): JsonResponse
     {
         $validateData = $request->validated();
-        $category = $this->categoryRepository->update($category, $validateData);
+        $this->categoryRepository->update($category, $validateData);
 
         return response()->json($category);
     }
@@ -92,7 +88,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category): JsonResponse
     {
-        $this->categoryRepository->delete($category);
+        $category = $this->categoryRepository->delete($category);
 
         return response()->json($category);
     }

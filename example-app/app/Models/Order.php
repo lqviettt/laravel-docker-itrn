@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class Order extends Model
+class Order extends BaseModel
 {
     use HasFactory;
 
@@ -37,36 +36,35 @@ class Order extends Model
 
         static::updating(function ($order) {
             $order->created_by = Auth::user()->user_name;
+
+            if ($order->status === 'canceled') {
+                $order->logs()->create([
+                    'status' => 'canceled',
+                    'description' => 'Order has been canceled, stock returned.',
+                ]);
+            }
         });
     }
 
-    public function scopeStatus($query, $status)
+    public function scopeSearchByNameCode($query, $search)
     {
-        return $query->where('status', $status);
+        return $query->when(
+            !is_null($search),
+            fn($query) => $query->where(function ($query) use ($search) {
+                $query->where('lastname', 'like', $search . '%')
+                    ->orWhere('firstname', 'like', $search . '%')
+                    ->orWhere('code', 'like', $search . '%');
+            })
+        );
     }
 
-    public function scopeCreatedBy($query, $created_by)
+    public function scopeSearchByPhone($query, $phone)
     {
-        return $query->where('created_by', $created_by);
+        return $query->when(
+            !is_null($phone),
+            fn($query) => $query->where(function ($query) use ($phone) {
+                $query->where('customer_phone', 'like', '%' . $phone . '%');
+            })
+        );
     }
-
-    public function scopeSearchNameCodePhone($query, $search)
-    {
-        return $query->where(function ($query) use ($search) {
-            $query->where('lastname', 'like',  $search . '%')
-                ->orWhere('firstname', 'like',   $search . '%')
-                ->orwhere('code', 'like', '%' . $search . '%')
-                ->orwhere('customer_phone', 'like', '%' . $search . '%');
-        });
-    }
-    
-    // public function scopePhone($query, $search)
-    // {
-    //     return $query->where('customer_phone', 'like', '%' . $search . '%');
-    // }
-
-    // public function scopeCode($query, $search)
-    // {
-    //     return $query->where('code', 'like', '%' . $search . '%');
-    // }
 }

@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Product extends BaseModel
 {
     use HasFactory;
 
@@ -29,21 +28,19 @@ class Product extends Model
             ->withPivot('quantity', 'price');
     }
 
-    public function scopeStatus($query, $status)
+    public function scopeSearchByCategory($query, $category)
     {
-        return $query->where('status', $status);
+        return $query->where('category_id', $category);
     }
 
-    public function scopeCategoryId($query, $category_id)
+    public function scopeSearchByNameCode($query, $search)
     {
-        return $query->where('category_id', $category_id);
-    }
-
-    public function scopeSearchNameCode($query, $search)
-    {
-        return $query->where(function ($query) use ($search) {
-            $query->where('name', 'like', '%' . $search . '%')
-                ->orwhere('code', 'like'. $search . '%');
-        });
+        return $query->when(
+            !is_null($search),
+            fn($query) => $query->where(function ($query) use ($search) {
+                $query->where('name', 'like','%' . $search . '%')
+                    ->orWhere('code', 'like', $search . '%');
+            })
+        );
     }
 }
