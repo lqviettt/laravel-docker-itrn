@@ -3,35 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\FormatData;
-use App\Helpers\OrderHelper;
 use App\Http\Requests\OrderRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Repositories\OrderRepositoryInterface;
 use Illuminate\Support\Facades\DB;
-use App\Traits\SearchTrait;
 
 class OrderController extends Controller
 {
-    use SearchTrait;
-    public function __construct(private FormatData $formatData) {}
+    protected $orderRepository;
 
-    /**
-     * index
-     *
-     * @return JsonResponse
-     */
-    public function index(Request $request): JsonResponse
+    public function __construct(OrderRepositoryInterface $orderRepository)
+    {
+        $this->orderRepository = $orderRepository;
+    }
+
+    public function index(Request $request, FormatData $formatData)
     {
         $status = $request->input('status');
         $search = $request->input('search');
         $created_by = $request->input('created_by');
 
-        $order = $this->applySearch(Order::query(), $search, $status, null, $created_by, 'order')
-            ->with('orderItem.product')
-            ->paginate(5);
+        $order = $this->orderRepository->all($search, $status, $created_by);
 
-        return response()->json($this->formatData->formatData($order));
+        return response()->json($formatData->formatData($order));
     }
 
     /**
@@ -43,16 +39,11 @@ class OrderController extends Controller
     public function store(OrderRequest $request): JsonResponse
     {
         return DB::transaction(function () use ($request) {
-            $order = Order::create($request->storeOrder());
-            $order->products()->attach($request->order_items);
-
-            foreach ($request->order_items as $item) {
-                $order->products()->where('products.id', $item['product_id'])
-                    ->decrement('products.quantity', $item['quantity']);
-            }
+            $order = $this->orderRepository
+                ->create($request->storeOrder(), $request->order_items);
 
             return response()->json($order);
-        }, 5);
+        });
     }
 
     /**
@@ -63,7 +54,7 @@ class OrderController extends Controller
      */
     public function show(Order $order): JsonResponse
     {
-        $order->load('orderItem.product');
+        $order = $this->orderRepository->find($order);
 
         return response()->json($order);
     }
@@ -85,18 +76,7 @@ class OrderController extends Controller
 
         try {
             DB::transaction(function () use ($request, $order) {
-                $order->update(['status' => $request->status]);
-                $oldItems = $order->orderItem()->with('product')->get();
-                $oldItemsByProductId = $oldItems->keyBy('product_id');
-                $orderItems = collect($request->order_items);
-
-                if ($request->status === 'canceled') {
-                    OrderHelper::cancelOrder($order, $oldItems);
-                } else {
-                    $order->update($request->updateOrder());
-                    OrderHelper::updateOrderItems($orderItems, $oldItemsByProductId, $order);
-                    OrderHelper::removeDeletedItems($oldItems, $orderItems);
-                }
+                $this->orderRepository->update($order, $request->updateOrder());
             });
 
             return response()->json($order->load('orderItem'));
@@ -114,7 +94,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order): JsonResponse
     {
-        $order->delete();
+        $order = $this->orderRepository->delete($order);
 
         return response()->json($order);
     }

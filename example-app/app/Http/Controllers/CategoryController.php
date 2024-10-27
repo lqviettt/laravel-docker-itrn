@@ -6,11 +6,22 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\Category;
 use App\Http\Requests\CategoryRequest;
-use App\Traits\SearchTrait;
+use App\Repositories\CategoryRepositoryInterface;
 
 class CategoryController extends Controller
 {
-    use SearchTrait;
+    protected $categoryRepository;
+
+    /**
+     * __construct
+     *
+     * @param  mixed $categoryRepository
+     * @return void
+     */
+    public function __construct(CategoryRepositoryInterface $categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+    }
 
     /**
      * index
@@ -22,9 +33,7 @@ class CategoryController extends Controller
         $search = $request->input('search');
         $status = $request->input('status');
 
-        $category = $this->applySearch(Category::query(), $search, $status, null, null, 'category')
-            ->select('id', 'name', 'status')
-            ->paginate(10);
+        $category = $this->categoryRepository->all($search, $status);
 
         return response()->json($category->makeHidden(['created_at', 'updated_at']));
     }
@@ -38,7 +47,7 @@ class CategoryController extends Controller
     public function store(CategoryRequest $request): JsonResponse
     {
         $validateData = $request->validated();
-        $category = Category::query()->create($validateData);
+        $category = $this->categoryRepository->create($validateData);
 
         return response()->json($category);
     }
@@ -51,9 +60,13 @@ class CategoryController extends Controller
      */
     public function show(Category $category): JsonResponse
     {
-        $category->load('product');
+        $category = $this->categoryRepository->find($category);
+        $products = $category->product()->limit(10)->get();
 
-        return response()->json($category);
+        return response()->json([
+            'category' => $category,
+            'products' => $products
+        ]);
     }
 
     /**
@@ -66,7 +79,7 @@ class CategoryController extends Controller
     public function update(CategoryRequest $request, Category $category): JsonResponse
     {
         $validateData = $request->validated();
-        $category->update($validateData);
+        $category = $this->categoryRepository->update($category, $validateData);
 
         return response()->json($category);
     }
@@ -79,7 +92,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category): JsonResponse
     {
-        $category->delete();
+        $this->categoryRepository->delete($category);
 
         return response()->json($category);
     }

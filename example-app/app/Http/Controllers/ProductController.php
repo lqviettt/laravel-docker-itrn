@@ -6,11 +6,22 @@ use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
-use App\Traits\SearchTrait;
+use App\Repositories\ProductRepositoryInterface;
 
 class ProductController extends Controller
 {
-    use SearchTrait;
+    protected $productRepository;
+    
+    /**
+     * __construct
+     *
+     * @param  mixed $productRepository
+     * @return void
+     */
+    public function __construct(ProductRepositoryInterface $productRepository)
+    {
+        return $this->productRepository = $productRepository;
+    }
 
     /**
      * index
@@ -23,10 +34,7 @@ class ProductController extends Controller
         $categoryId = $request->input('category_id');
         $status = $request->input('status');
 
-        $products = $this->applySearch(Product::query(), $search, $status, $categoryId, null, 'product')
-            ->with('category:id,name')
-            ->select('id', 'name', 'code', 'quantity', 'category_id', 'description', 'price', 'status',)
-            ->paginate(10);
+        $products = $this->productRepository->all($search, $status, $categoryId);
 
         return response()->json($products->makeHidden(['created_at', 'updated_at']));
     }
@@ -40,7 +48,7 @@ class ProductController extends Controller
     public function store(ProductRequest $request): JsonResponse
     {
         $validateData = $request->validated();
-        $product = Product::query()->create($validateData);
+        $product = $this->productRepository->create($validateData);
 
         return response()->json($product);
     }
@@ -52,6 +60,7 @@ class ProductController extends Controller
      */
     public function show(Product $product): JsonResponse
     {
+        $product = $this->productRepository->find($product);
         $product->load('category');
 
         return response()->json($product);
@@ -67,7 +76,7 @@ class ProductController extends Controller
     public function update(ProductRequest $request, Product $product): JsonResponse
     {
         $validateData = $request->validated();
-        $product->update($validateData);
+        $product = $this->productRepository->update($product, $validateData);
 
         return response()->json($product);
     }
@@ -80,7 +89,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): JsonResponse
     {
-        $product->delete();
+        $product = $this->productRepository->delete($product);
 
         return response()->json($product);
     }
