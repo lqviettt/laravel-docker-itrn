@@ -30,12 +30,13 @@ class CategoryController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $search = $request->input('search');
-        $status = $request->input('status');
 
-        $category = $this->categoryRepository->select($search, $status);
+        $query = $this->categoryRepository
+            ->builderQuery()
+            ->searchByName($request->search)
+            ->searchByStatus($request->status);
 
-        return response()->json($category->makeHidden(['created_at', 'updated_at']));
+        return response()->json($query->paginate(10)->makeHidden(['created_at', 'updated_at']));
     }
 
     /**

@@ -28,9 +28,14 @@ class Product extends BaseModel
             ->withPivot('quantity', 'price');
     }
 
-    public function scopeSearchByCategory($query, $category)
+    public function scopeSearchByCategory($query, $categoryId)
     {
-        return $query->where('category_id', $category);
+        return $query->when(
+            !is_null($categoryId),
+            fn($query) => $query->where(function ($query) use ($categoryId) {
+                $query->where('status', $categoryId);
+            })
+        );
     }
 
     public function scopeSearchByNameCode($query, $search)
@@ -38,7 +43,7 @@ class Product extends BaseModel
         return $query->when(
             !is_null($search),
             fn($query) => $query->where(function ($query) use ($search) {
-                $query->where('name', 'like','%' . $search . '%')
+                $query->where('name', 'like', '%' . $search . '%')
                     ->orWhere('code', 'like', $search . '%');
             })
         );

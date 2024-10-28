@@ -28,7 +28,8 @@ class ProductController extends Controller
 
         $query = $this->productRepository
             ->builderQuery()
-            ->searchByNameCode($request->search);
+            ->searchByNameCode($request->search)
+            ->SearchByCategory($request->categoryId);
 
         return response()->json($query->paginate(10)->makeHidden(['created_at', 'updated_at']));
     }
