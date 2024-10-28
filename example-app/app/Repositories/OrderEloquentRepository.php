@@ -35,7 +35,7 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
                 ->decrement('products.quantity', $item['quantity']);
         }
 
-        return $order;
+        return $order->load('orderItem');
     }
 
     public function updateOrder(Model $model, array $data)

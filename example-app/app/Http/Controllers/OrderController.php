@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Helpers\FormatData;
 use App\Http\Requests\OrderRequest;
+use App\Mail\OrderSuccessfulMail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Repositories\OrderRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Mail\OrderSuccessfulMail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class Order extends BaseModel
 {
@@ -32,6 +34,10 @@ class Order extends BaseModel
     {
         static::creating(function ($order) {
             $order->created_by = Auth::user()->user_name;
+            $userEmail = Auth::user()->email;
+            // dd($order->orderItem);
+            
+            Mail::to($userEmail)->send(new OrderSuccessfulMail($order));
         });
 
         static::updating(function ($order) {
