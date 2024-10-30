@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Jobs\SendVerificationEmail;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
-{    
+{
     /**
      * __construct
      *
@@ -18,7 +21,7 @@ class AuthController extends Controller
     {
         $this->middleware('auth:api', ['except' => ['login']]);
     }
-    
+
     /**
      * login
      *
@@ -34,7 +37,7 @@ class AuthController extends Controller
 
         return $this->respondWithToken($token);
     }
-    
+
     /**
      * logout
      *
@@ -46,7 +49,26 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Successfully logged out']);
     }
-    
+
+    public function register(Request $request)
+    {
+        $user = User::create([
+            'name' => $request->name,
+            'user_name' => $request->user_name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        $verificationCode = Str::random(6);
+
+        $user->verification_code = $verificationCode;
+        $user->save();
+
+        SendVerificationEmail::dispatch($user, $verificationCode);
+
+        return response()->json(['message' => 'Đăng ký thành công! Kiểm tra email để xác minh.']);
+    }
+
     /**
      * respondWithToken
      *
