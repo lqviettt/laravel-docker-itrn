@@ -42,7 +42,7 @@ class OrderController extends Controller
     /**
      * store
      *
-     * @param  mixed $request
+     * @param  OrderRequest $request
      * @return JsonResponse
      */
     public function store(OrderRequest $request): JsonResponse

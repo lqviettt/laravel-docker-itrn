@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use App\Models\Product;
-use App\Models\OrderHistory;
 
 class OrderHelper
 {
