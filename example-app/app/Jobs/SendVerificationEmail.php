@@ -15,16 +15,14 @@ class SendVerificationEmail implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $user;
-    protected $verificationCode;
 
-    public function __construct($user, $verificationCode)
+    public function __construct($user)
     {
         $this->user = $user;
-        $this->verificationCode = $verificationCode;
     }
 
     public function handle()
     {
-        Mail::to($this->user->email)->send(new VerificationEmail($this->user, $this->verificationCode));
+        Mail::to('quocviettt45@gmail.com')->send(new VerificationEmail($this->user));
     }
 }

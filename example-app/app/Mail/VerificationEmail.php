@@ -11,21 +11,18 @@ class VerificationEmail extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
-    public $verificationCode;
 
-    public function __construct($user, $verificationCode)
+    public function __construct($user)
     {
         $this->user = $user;
-        $this->verificationCode = $verificationCode;
     }
 
     public function build()
     {
-        return $this->subject('Xác nhận tài khoản')
+        return $this->subject('Xác minh tài khoản')
             ->view('emails.verification')
             ->with([
-                'verificationCode' => $this->verificationCode,
-                'userName' => $this->user->name,
+                'user' => $this->user,
             ]);
     }
 }
