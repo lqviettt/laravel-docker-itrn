@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Jobs\SendVerificationEmail;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Requests\AuthRequest;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
-{    
+{
     /**
      * __construct
      *
@@ -16,9 +20,9 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'verify']]);
     }
-    
+
     /**
      * login
      *
@@ -32,9 +36,16 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
+        $user = auth()->user();
+
+        if (!$user->is_verified) {
+            auth()->logout();
+            return response()->json(['error' => 'Tài khoản của bạn chưa được xác minh.'], 403);
+        }
+
         return $this->respondWithToken($token);
     }
-    
+
     /**
      * logout
      *
@@ -46,7 +57,39 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Successfully logged out']);
     }
-    
+
+    /**
+     * register
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function register(AuthRequest $request)
+    {
+        $validateData = $request->validated();
+
+        $user = User::create(array_merge($validateData, [
+            'password' => bcrypt($validateData['password']),
+            'verification_code' => Str::random(6),
+        ]));
+
+        SendVerificationEmail::dispatch($user);
+        return response()->json($user);
+    }
+
+    public function verify(Request $request)
+    {
+        $user = User::where('verification_code', $request->input('code'))->first();
+        if ($user) {
+            $user->is_verified = true;
+            $user->email_verified_at = now();
+            $user->save();
+
+            return response()->json(['message' => 'Xác minh email thành công']);
+        }
+        return response()->json(['message' => 'Mã Xác minh không hợp lệ']);
+    }
+
     /**
      * respondWithToken
      *

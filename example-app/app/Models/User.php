@@ -20,8 +20,12 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'name',
+        'user_name',
         'email',
         'password',
+        'verification_code',
+        'email_verified_at',
+        'is_verified'
     ];
 
     /**
@@ -43,7 +47,7 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-    
+
     /**
      * getJWTIdentifier
      *
