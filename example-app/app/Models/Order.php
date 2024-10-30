@@ -12,7 +12,7 @@ class Order extends BaseModel
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['code', 'created_by', 'firstname', 'lastname', 'customer_phone', 'status', 'shipping_address'];
+    protected $fillable = ['code', 'created_by', 'firstname', 'lastname', 'customer_phone', 'customer_email', 'status', 'shipping_address'];
 
     public function orderItem()
     {
@@ -34,10 +34,6 @@ class Order extends BaseModel
     {
         static::creating(function ($order) {
             $order->created_by = Auth::user()->user_name;
-            $userEmail = Auth::user()->email;
-            // dd($order->orderItem);
-            
-            Mail::to($userEmail)->send(new OrderSuccessfulMail($order));
         });
 
         static::updating(function ($order) {

@@ -36,6 +36,7 @@ class OrderRequest extends FormRequest
             "code" => $codeRule,
             'customer_name' => 'required|string|max:32',
             'customer_phone' => 'required|string|max:10',
+            'customer_email' => 'required|email',
             'status' => 'required|in:pending,shipping,delivered,canceled',
             'shipping_address' => 'required|string|max:255',
             'order_items' => 'required|array',
@@ -56,6 +57,7 @@ class OrderRequest extends FormRequest
             'firstname' => $firstname,
             'lastname' => $lastname,
             'customer_phone' => $this->customer_phone,
+            'customer_email' => $this->customer_email,
             'shipping_address' => $this->shipping_address,
             'status' => $this->status ?? 'default_status',
         ];
@@ -72,6 +74,7 @@ class OrderRequest extends FormRequest
             'firstname' => $firstname,
             'lastname' => $lastname,
             'customer_phone' => $this->customer_phone,
+            'customer_email' => $this->customer_email,
             'shipping_address' => $this->shipping_address,
             'status' => $this->status,
             'order_items' => $this->order_items
