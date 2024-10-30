@@ -25,9 +25,11 @@
     </ul>
 
     <h3>Total Price:
-        {{ $order->products->sum(function ($product) {
-        return $product->pivot->quantity * $product->price;
-    }) }}
+        {{
+            number_format($order->products->sum(function ($product) {
+                return $product->pivot->quantity * $product->price;
+            }), 0, ',', '.') . ' VND';
+        }}
     </h3>
 </body>
 

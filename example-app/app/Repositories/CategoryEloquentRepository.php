@@ -19,17 +19,9 @@ class CategoryEloquentRepository extends EloquentRepository implements CategoryR
         return Category::class;
     }
 
-    public function select($search, $status)
+    public function builderQuery()
     {
-        $query = $this->_model::query();
-
-        return $query->when($search, function ($query) use ($search) {
-            return $query->searchName($search);
-        })
-            ->when($status, function ($query) use ($status) {
-                return $query->status($status);
-            })
-            ->paginate(10);
+        return $this->_model::query();
     }
 
     public function find(Model $model)
