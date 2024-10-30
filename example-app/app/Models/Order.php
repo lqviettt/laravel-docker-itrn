@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Mail\OrderSuccessfulMail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class Order extends BaseModel
 {
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['code', 'created_by', 'firstname', 'lastname', 'customer_phone', 'status', 'shipping_address'];
+    protected $fillable = ['code', 'created_by', 'firstname', 'lastname', 'customer_phone', 'customer_email', 'status', 'shipping_address'];
 
     public function orderItem()
     {

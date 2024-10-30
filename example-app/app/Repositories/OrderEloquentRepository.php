@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Helpers\OrderHelper;
+use App\Jobs\SendOrderEmailJob;
 use App\Models\Order;
 use App\Repositories\EloquentRepository;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +35,9 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
             $order->products()->where('products.id', $item['product_id'])
                 ->decrement('products.quantity', $item['quantity']);
         }
+        
+        $order->load('products');
+        SendOrderEmailJob::dispatch($order);
 
         return $order;
     }

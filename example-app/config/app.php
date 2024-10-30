@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Laravel Shop'),
 
     /*
     |--------------------------------------------------------------------------
@@ -186,4 +186,6 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+
+    'admin_email' => env('ADMIN_EMAIL', 'lqviettt3403@gmail.com'),
 ];

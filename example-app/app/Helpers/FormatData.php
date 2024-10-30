@@ -28,6 +28,7 @@ class FormatData
                 'created_by' => $order->created_by,
                 'customer_name' => $order->lastname . ' ' . $order->firstname,
                 'customer_phone' => $order->customer_phone,
+                'customer_email' => $order->customer_email,
                 'status' => $order->status,
                 'shipping_address' => $order->shipping_address,
                 'order_item' => $order->orderItem->map(function ($item) {
