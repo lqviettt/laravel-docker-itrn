@@ -30,7 +30,6 @@ class CategoryController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-
         $query = $this->categoryRepository
             ->builderQuery()
             ->searchByName($request->search)
