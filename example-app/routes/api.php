@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OrderController;
 
 use Illuminate\Support\Facades\Route;
@@ -59,6 +60,13 @@ Route::group([
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::resource('/product', ProductController::class);
-    Route::resource('/category', CategoryController::class);
     Route::resource('/order', OrderController::class);
+    Route::resource('/employee', EmployeeController::class);
+
+    Route::get('/category', [CategoryController::class, 'index'])->middleware('checkPermission:category,view');
+    Route::post('/category', [CategoryController::class, 'store'])->middleware('checkPermission:category,create');
+    Route::get('/category/{category}', [CategoryController::class, 'show'])->middleware('checkPermission:category,detail');
+    Route::put('/category/{category}', [CategoryController::class, 'update'])->middleware('checkPermission:category,edit');
+    Route::delete('/category/{category}', [CategoryController::class, 'destroy'])->middleware('checkPermission:category,delete');
+
 });

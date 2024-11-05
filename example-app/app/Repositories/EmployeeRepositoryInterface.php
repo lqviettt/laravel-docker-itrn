@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 
-interface ProductRepositoryInterface
+interface EmployeeRepositoryInterface
 {
     public function builderQuery();
 
@@ -13,4 +13,6 @@ interface ProductRepositoryInterface
     public function create(array $data);
 
     public function update(Model $model, array $data);
+
+    public function delete(Model $model);
 }
