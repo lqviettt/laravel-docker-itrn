@@ -57,8 +57,6 @@ class EmployeeRequest extends FormRequest
             'gender' => $this->gender,
             'start_date' => $this->start_date,
             'orders_sold' => $this->orders_sold,
-
-
         ];
     }
 

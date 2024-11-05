@@ -10,6 +10,7 @@ class Category extends BaseModel
 
     protected $primaryKey = 'id';
     protected $fillable = ['name', 'status'];
+    protected $hidden = ['created_at','updated_at'];
 
     public function product()
     {

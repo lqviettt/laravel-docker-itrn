@@ -25,13 +25,14 @@ class ProductController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-
+        $perPage = $request->input('perPage', 5);
+        $this->authorize('view', Product::class);
         $query = $this->productRepository
             ->builderQuery()
             ->searchByNameCode($request->search)
             ->SearchByCategory($request->categoryId);
 
-        return response()->json($query->paginate(10)->makeHidden(['created_at', 'updated_at']));
+        return response()->json($query->paginate($perPage));
     }
 
     /**
@@ -42,6 +43,7 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request): JsonResponse
     {
+        $this->authorize('create', Product::class);
         $validateData = $request->validated();
         $product = $this->productRepository->create($validateData);
 
@@ -55,6 +57,7 @@ class ProductController extends Controller
      */
     public function show(Product $product): JsonResponse
     {
+        $this->authorize('view', Product::class);
         $product = $this->productRepository->find($product);
 
         return response()->json($product);
@@ -63,12 +66,13 @@ class ProductController extends Controller
     /**
      * update
      *
-     * @param  mixed $request
-     * @param  mixed $id
-     * @return void
+     * @param  ProductRequest $request
+     * @param  Product $product
+     * @return JsonResponse
      */
     public function update(ProductRequest $request, Product $product): JsonResponse
     {
+        $this->authorize('update', $product);
         $validateData = $request->validated();
         $product = $this->productRepository->update($product, $validateData);
 
@@ -78,11 +82,12 @@ class ProductController extends Controller
     /**
      * destroy
      *
-     * @param  mixed $id
-     * @return void
+     * @param  mixed $product
+     * @return JsonResponse
      */
     public function destroy(Product $product): JsonResponse
     {
+        $this->authorize('delete', $product);
         $product->delete();
 
         return response()->json($product);
