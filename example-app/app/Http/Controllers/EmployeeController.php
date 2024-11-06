@@ -31,12 +31,14 @@ class EmployeeController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $perPage = $request->input('perPage', 5);
+        $this->authorize('view', Employee::class);
         $query = $this->employeeRepository
             ->builderQuery()
             ->searchByNameCode($request->search)
             ->searchByPhone($request->phone);
 
-        return response()->json($query->paginate(10)->makeHidden(['created_at', 'updated_at']));
+        return response()->json($query->paginate($perPage));
     }
 
     /**
@@ -47,8 +49,7 @@ class EmployeeController extends Controller
      */
     public function store(EmployeeRequest $request): JsonResponse
     {
-        // $va = $request->validated();
-
+        $this->authorize('create', Employee::class);
         $employee = $this->employeeRepository->create($request->newEmployee());
 
         return response()->json($employee);
@@ -62,6 +63,7 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee): JsonResponse
     {
+        $this->authorize('view', $employee);
         $employee = $this->employeeRepository->find($employee);
 
         return response()->json($employee);
@@ -76,6 +78,7 @@ class EmployeeController extends Controller
      */
     public function update(EmployeeRequest $request, Employee $employee): JsonResponse
     {
+        $this->authorize('update', $employee);
         $this->employeeRepository->update($employee, $request->updateEmployee());
 
         return response()->json($employee);
@@ -89,6 +92,7 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee): JsonResponse
     {
+        $this->authorize('delete', $employee);
         $category = $this->employeeRepository->delete($employee);
 
         return response()->json($category);

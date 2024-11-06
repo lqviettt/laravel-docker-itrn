@@ -27,8 +27,10 @@ class OrderController extends Controller
      * @param  FormatData $formatData
      * @return void
      */
-    public function index(Request $request, FormatData $formatData)
+    public function index(Request $request, FormatData $formatData): JsonResponse
     {
+        $perPage = $request->input('perPage', 5);
+        $this->authorize('view', Order::class);
         $query = $this->orderRepository
             ->builderQuery()
             ->searchByStatus($request->status)
@@ -36,7 +38,7 @@ class OrderController extends Controller
             ->searchByPhone($request->phone)
             ->searchByCreated($request->created_by);
 
-        return response()->json($formatData->formatData($query->paginate(10)));
+        return response()->json($formatData->formatData($query->paginate($perPage)));
     }
 
     /**
@@ -47,6 +49,7 @@ class OrderController extends Controller
      */
     public function store(OrderRequest $request): JsonResponse
     {
+        $this->authorize('create', Order::class);
         return DB::transaction(function () use ($request) {
             $order = $this->orderRepository
                 ->createOrder($request->storeOrder(), $request->order_items);
@@ -63,6 +66,7 @@ class OrderController extends Controller
      */
     public function show(Order $order): JsonResponse
     {
+        $this->authorize('view', $order);
         $order = $this->orderRepository->find($order);
 
         return response()->json($order);
@@ -77,6 +81,7 @@ class OrderController extends Controller
      */
     public function update(OrderRequest $request, Order $order): JsonResponse
     {
+        $this->authorize('update', $order);
         if ($order->status === 'canceled') {
             return response()->json([
                 'error' => 'Cannot update a canceled order.'
@@ -103,6 +108,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order): JsonResponse
     {
+        $this->authorize('delete', $order);
         $order = $this->orderRepository->delete($order);
 
         return response()->json($order);

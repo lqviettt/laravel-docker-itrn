@@ -30,12 +30,14 @@ class CategoryController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $perPage = $request->input('perPage', 5);
+        $this->authorize('view', Category::class);
         $query = $this->categoryRepository
             ->builderQuery()
             ->searchByName($request->search)
             ->searchByStatus($request->status);
 
-        return response()->json($query->paginate(10)->makeHidden(['created_at', 'updated_at']));
+        return response()->json($query->paginate($perPage));
     }
 
     /**
@@ -46,6 +48,7 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request): JsonResponse
     {
+        $this->authorize('create', Category::class);
         $validateData = $request->validated();
         $category = $this->categoryRepository->create($validateData);
 
@@ -60,6 +63,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category): JsonResponse
     {
+        $this->authorize('view', Category::class);
         $category = $this->categoryRepository->find($category);
 
         return response()->json($category);
@@ -74,6 +78,7 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request, Category $category): JsonResponse
     {
+        $this->authorize('update', $category);
         $validateData = $request->validated();
         $this->categoryRepository->update($category, $validateData);
 
@@ -88,6 +93,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category): JsonResponse
     {
+        $this->authorize('delete', $category);
         $category = $this->categoryRepository->delete($category);
 
         return response()->json($category);

@@ -57,14 +57,14 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Successfully logged out']);
     }
-
+    
     /**
      * register
      *
      * @param  mixed $request
-     * @return void
+     * @return JsonResponse
      */
-    public function register(AuthRequest $request)
+    public function register(AuthRequest $request): JsonResponse
     {
         $validateData = $request->validated();
 
@@ -76,8 +76,14 @@ class AuthController extends Controller
         SendVerificationEmail::dispatch($user);
         return response()->json($user);
     }
-
-    public function verify(Request $request)
+    
+    /**
+     * verify
+     *
+     * @param  mixed $request
+     * @return JsonResponse
+     */
+    public function verify(Request $request): JsonResponse
     {
         $user = User::where('verification_code', $request->input('code'))->first();
         if ($user) {
@@ -104,7 +110,12 @@ class AuthController extends Controller
             'expires_in' => JWTAuth::factory()->getTTL() * 60
         ]);
     }
-
+    
+    /**
+     * profile
+     *
+     * @return JsonResponse
+     */
     public function profile(): JsonResponse
     {
         $profile = auth()->user();
