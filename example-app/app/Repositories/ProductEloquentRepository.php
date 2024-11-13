@@ -2,10 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Models\Product;
 use App\Repositories\ProductRepositoryInterface;
 use App\Repositories\EloquentRepository;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Product\Models\Product;
 
 class ProductEloquentRepository extends EloquentRepository implements ProductRepositoryInterface
 {

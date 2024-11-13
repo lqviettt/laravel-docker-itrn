@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\PermissionController;
 use Illuminate\Support\Facades\Route;
+use Modules\Category\Http\Controllers\CategoryController;
+use Modules\Employee\Http\Controllers\EmployeeController;
+use Modules\Employee\Http\Controllers\PermissionController;
+use Modules\Order\Http\Controllers\OrderController;
+use Modules\Product\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------

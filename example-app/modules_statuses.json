@@ -1,0 +1,7 @@
+{
+    "CategoryProduct": true,
+    "Category": true,
+    "Product": true,
+    "Order": true,
+    "Employee": true
+}

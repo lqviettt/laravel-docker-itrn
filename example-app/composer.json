@@ -2,7 +2,10 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.1",
@@ -10,6 +13,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "nwidart/laravel-modules": "^11.1",
         "tymon/jwt-auth": "^2.1"
     },
     "require-dev": {
@@ -24,8 +28,19 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Modules\\": "Modules/",
+            "Modules\\Category\\": "Modules/Category/app/",
+            "Modules\\Product\\": "Modules/Product/app/",
+            "Modules\\Employee\\": "Modules/Employee/app/",
+            "Modules\\Order\\": "Modules/Order/app/",
+            "Modules\\Category\\Database\\Factories\\": "Modules/Category/database/factories/",
+            "Modules\\Category\\Database\\Seeders\\": "Modules/Category/database/seeders/",
+            "Modules\\Product\\Database\\Factories\\": "Modules/Product/database/factories/",
+            "Modules\\Product\\Database\\Seeders\\": "Modules/Product/database/seeders/",
+            "Modules\\Employee\\Database\\Factories\\": "Modules/Employee/database/factories/",
+            "Modules\\Employee\\Database\\Seeders\\": "Modules/Employee/database/seeders/",
+            "Modules\\Order\\Database\\Factories\\": "Modules/Order/database/factories/",
+            "Modules\\Order\\Database\\Seeders\\": "Modules/Order/database/seeders/"
         }
     },
     "autoload-dev": {
@@ -59,7 +74,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "wikimedia/composer-merge-plugin": true
         }
     },
     "minimum-stability": "stable",

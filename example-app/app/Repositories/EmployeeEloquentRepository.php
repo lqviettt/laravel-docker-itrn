@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Models\Employee;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Employee\Models\Employee;
 
 class EmployeeEloquentRepository extends EloquentRepository implements EmployeeRepositoryInterface
 {

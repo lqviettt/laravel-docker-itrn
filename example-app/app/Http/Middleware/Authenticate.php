@@ -10,6 +10,11 @@ class Authenticate extends Middleware
 {
     public function handle($request, Closure $next, ...$guards)
     {
+
+        if ($request->routeIs('category.index') || $request->routeIs('product.index')) {
+            return $next($request); 
+        }
+
         try {
             if (!$request->user()) {
                 return response()->json(['error' => 'Unauthorized: Token is missing or invalid'], 401);

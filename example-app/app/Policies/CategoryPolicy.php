@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
-use App\Models\Category;
 use App\Models\User;
 use App\Services\PermissionService;
+use Modules\Category\Models\Category;
 
 class CategoryPolicy
 {
@@ -15,8 +15,12 @@ class CategoryPolicy
         $this->permissionService = $permissionService;
     }
 
-    public function view(User $user)
+    public function view(?User $user)
     {
+        if (!$user) {
+            return true;
+        }
+
         return $user->is_admin || $this->permissionService->hasPermission($user, 'view', 'category');
     }
 
