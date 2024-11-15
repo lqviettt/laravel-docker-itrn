@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
-use App\Models\Order;
 use App\Models\User;
 use App\Services\PermissionService;
+use Modules\Order\Models\Order;
 
 class OrderPolicy
 {

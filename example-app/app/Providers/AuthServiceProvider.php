@@ -2,15 +2,15 @@
 
 namespace App\Providers;
 
-use App\Models\Category;
-use App\Models\Employee;
-use App\Models\Order;
-use App\Models\Product;
 use App\Policies\CategoryPolicy;
 use App\Policies\OrderPolicy;
 use App\Policies\ProductPolicy;
 use App\Policies\EmployeePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Modules\Employee\Models\Employee;
+use Modules\Order\Models\Order;
+use Modules\Product\Models\Category;
+use Modules\Product\Models\Product;
 
 class AuthServiceProvider extends ServiceProvider
 {

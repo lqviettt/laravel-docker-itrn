@@ -2,11 +2,11 @@
 
 namespace App\Repositories;
 
-use App\Helpers\OrderHelper;
 use App\Jobs\SendOrderEmailJob;
-use App\Models\Order;
 use App\Repositories\EloquentRepository;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Order\Helpers\OrderHelper;
+use Modules\Order\Models\Order;
 
 class OrderEloquentRepository extends EloquentRepository implements OrderRepositoryInterface
 {

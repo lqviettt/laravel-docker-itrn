@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
-use App\Models\Product;
 use App\Models\User;
 use App\Services\PermissionService;
+use Modules\Product\Models\Product;
 
 class ProductPolicy
 {
@@ -15,8 +15,12 @@ class ProductPolicy
         $this->permissionService = $permissionService;
     }
 
-    public function view(User $user)
+    public function view(?User $user)
     {
+        if (!$user) {
+            return true;
+        }
+        
         return $user->is_admin || $this->permissionService->hasPermission($user, 'view', 'product');
     }
 
