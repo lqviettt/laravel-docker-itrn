@@ -27,6 +27,6 @@ class ProductEloquentRepository extends EloquentRepository implements ProductRep
 
     public function find(Model $model)
     {
-        return $model->load('category');
+        return $model->load('category', 'variants');
     }
 }

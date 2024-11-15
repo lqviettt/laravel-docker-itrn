@@ -33,6 +33,8 @@ class ProductController extends Controller
             ->searchByNameCode($request->search)
             ->SearchByCategory($request->categoryId);
 
+        $query = $query->with('variants');
+
         return response()->json($query->paginate($perPage));
     }
 
