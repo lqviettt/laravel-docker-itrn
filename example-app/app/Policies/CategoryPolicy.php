@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Services\PermissionService;
-use Modules\Category\Models\Category;
+use Modules\Product\Models\Category;
 
 class CategoryPolicy
 {

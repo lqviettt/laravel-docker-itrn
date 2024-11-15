@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
-use Modules\Category\Http\Controllers\CategoryController;
 use Modules\Employee\Http\Controllers\EmployeeController;
 use Modules\Employee\Http\Controllers\PermissionController;
 use Modules\Order\Http\Controllers\OrderController;
+use Modules\Product\Http\Controllers\CategoryController;
 use Modules\Product\Http\Controllers\ProductController;
 
 /*

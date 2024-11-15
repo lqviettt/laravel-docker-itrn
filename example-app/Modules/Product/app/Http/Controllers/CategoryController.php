@@ -1,13 +1,13 @@
 <?php
 
-namespace Modules\Category\Http\Controllers;
+namespace Modules\Product\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Repositories\CategoryRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Modules\Category\Models\Category;
+use Modules\Product\Models\Category;
 
 class CategoryController extends Controller
 {

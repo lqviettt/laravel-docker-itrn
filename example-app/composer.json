@@ -29,12 +29,9 @@
         "psr-4": {
             "App\\": "app/",
             "Modules\\": "Modules/",
-            "Modules\\Category\\": "Modules/Category/app/",
             "Modules\\Product\\": "Modules/Product/app/",
             "Modules\\Employee\\": "Modules/Employee/app/",
             "Modules\\Order\\": "Modules/Order/app/",
-            "Modules\\Category\\Database\\Factories\\": "Modules/Category/database/factories/",
-            "Modules\\Category\\Database\\Seeders\\": "Modules/Category/database/seeders/",
             "Modules\\Product\\Database\\Factories\\": "Modules/Product/database/factories/",
             "Modules\\Product\\Database\\Seeders\\": "Modules/Product/database/seeders/",
             "Modules\\Employee\\Database\\Factories\\": "Modules/Employee/database/factories/",

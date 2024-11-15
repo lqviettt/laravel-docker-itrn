@@ -4,7 +4,6 @@ namespace Modules\Product\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Category\Models\Category;
 use Modules\Order\Models\Order;
 use Modules\Order\Models\OrderItem;
 
