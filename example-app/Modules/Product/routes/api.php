@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Product\Http\Controllers\CategoryController;
 use Modules\Product\Http\Controllers\ProductController;
 
 /*
@@ -17,3 +18,10 @@ use Modules\Product\Http\Controllers\ProductController;
 // Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 //     Route::apiResource('product', ProductController::class)->names('product');
 // });
+
+Route::group([
+    'middleware' => 'auth:api'
+], function () {
+    Route::resource('/product', ProductController::class);
+    Route::resource('/category', CategoryController::class);
+});
