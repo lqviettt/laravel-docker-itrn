@@ -22,6 +22,7 @@ use Modules\Product\Http\Controllers\ProductController;
 Route::group([
     'middleware' => 'auth:api'
 ], function () {
-    Route::resource('/product', ProductController::class);
-    Route::resource('/category', CategoryController::class);
 });
+
+Route::resource('/category', CategoryController::class);
+Route::resource('/product', ProductController::class);
