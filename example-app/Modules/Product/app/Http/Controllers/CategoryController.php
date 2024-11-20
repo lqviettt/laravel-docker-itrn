@@ -10,19 +10,14 @@ use Illuminate\Http\Request;
 use Modules\Product\Models\Category;
 
 class CategoryController extends Controller
-{
-    protected $categoryRepository;
-
+{    
     /**
      * __construct
      *
      * @param  mixed $categoryRepository
      * @return void
      */
-    public function __construct(CategoryRepositoryInterface $categoryRepository)
-    {
-        $this->categoryRepository = $categoryRepository;
-    }
+    public function __construct(protected CategoryRepositoryInterface $categoryRepository) {}
 
     /**
      * index

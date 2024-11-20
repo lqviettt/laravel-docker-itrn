@@ -42,7 +42,7 @@ class Product extends BaseModel
         return $query->when(
             !is_null($categoryId),
             fn($query) => $query->where(function ($query) use ($categoryId) {
-                $query->where('status', $categoryId);
+                $query->where('category_id', $categoryId);
             })
         );
     }

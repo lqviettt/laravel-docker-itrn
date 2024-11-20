@@ -14,7 +14,7 @@ class ProductController extends Controller
     /**
      * __construct
      *
-     * @param  ProductRepositoryInterface $productRepository
+     * @param  mixed $productRepository
      * @return void
      */
     public function __construct(protected ProductRepositoryInterface $productRepository) {}
@@ -31,7 +31,7 @@ class ProductController extends Controller
         $query = $this->productRepository
             ->builderQuery()
             ->searchByNameCode($request->search)
-            ->SearchByCategory($request->categoryId);
+            ->searchByCategory($request->categoryId);
 
         $query = $query->with('variants');
 
@@ -91,7 +91,7 @@ class ProductController extends Controller
     public function destroy(Product $product): JsonResponse
     {
         $this->authorize('delete', $product);
-        $product->delete();
+        $product = $this->productRepository->delete($product);
 
         return response()->json($product);
     }

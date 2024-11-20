@@ -4,12 +4,12 @@ namespace Modules\Product\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\Product\Database\Factories\ProductVariantFactory;
 
 class ProductVariant extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id';
     protected $fillable = ['product_id', 'variant_option_id', 'value', 'price'];
 
     public function product()
