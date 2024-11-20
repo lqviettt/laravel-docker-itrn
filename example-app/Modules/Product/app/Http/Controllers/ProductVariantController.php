@@ -2,9 +2,9 @@
 
 namespace Modules\Product\Http\Controllers;
 
+use App\Contract\ProductVariantRepointerface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductVariantRequest;
-use App\Repositories\ProductVariantRepointerface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Product\Models\ProductVariant;
@@ -90,7 +90,7 @@ class ProductVariantController extends Controller
      */
     public function delete(ProductVariant $pvariantId): JsonResponse
     {
-        $pvariantId = $this->productVariantRepointerface->delete($pvariantId);
+        $pvariantId->delete($pvariantId);
 
         return response()->json($pvariantId);
     }

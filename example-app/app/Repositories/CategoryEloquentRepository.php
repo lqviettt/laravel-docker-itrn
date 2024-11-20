@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Repositories\CategoryRepositoryInterface;
+use App\Contract\CategoryRepositoryInterface;
 use App\Repositories\EloquentRepository;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Product\Models\Category;

@@ -2,9 +2,9 @@
 
 namespace Modules\Order\Http\Controllers;
 
+use App\Contract\OrderRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
-use App\Repositories\OrderRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

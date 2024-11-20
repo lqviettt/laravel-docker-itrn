@@ -2,10 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Contract\ProductVariantRepointerface;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use Modules\Product\Models\ProductVariant;
-use Modules\Product\Models\VariantOption;
 
 class ProductVariantEloquentRepo extends EloquentRepository implements ProductVariantRepointerface
 {
@@ -22,7 +22,9 @@ class ProductVariantEloquentRepo extends EloquentRepository implements ProductVa
 
     public function createProductVariant(array $data, $productId)
     {
-        $variantOption = VariantOption::findOrFail($data['variant_option_id']);
+        dd($this->_model); // null ?
+
+        $variantOption = $this->_model->variantOption->findOrFail($data['variant_option_id']);
 
         $allowedTypes = ['color', 'storage'];
         if (in_array($variantOption->type, $allowedTypes) && $data['value'] !== $variantOption->name) {
@@ -41,7 +43,7 @@ class ProductVariantEloquentRepo extends EloquentRepository implements ProductVa
 
     public function updateProductVariant(Model $model, array $data)
     {
-        $variantOption = VariantOption::findOrFail($data['variant_option_id']);
+        $variantOption = $model->variantOption->findOrFail($data['variant_option_id']);
 
         $allowedTypes = ['color', 'storage'];
         if (in_array($variantOption->type, $allowedTypes) && $data['value'] !== $variantOption->name) {

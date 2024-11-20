@@ -2,9 +2,9 @@
 
 namespace Modules\Product\Http\Controllers;
 
+use App\Contract\VariantRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VariantRequest;
-use App\Repositories\VariantRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Product\Models\VariantOption;
@@ -85,7 +85,7 @@ class VariantOptionController extends Controller
      */
     public function destroy(VariantOption $variant): JsonResponse
     {
-        $variant = $this->variantRepository->delete($variant);
+        $variant->delete($variant);
 
         return response()->json($variant);
     }

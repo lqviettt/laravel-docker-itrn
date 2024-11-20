@@ -2,18 +2,18 @@
 
 namespace App\Providers;
 
+use App\Contract\CategoryRepositoryInterface;
+use App\Contract\EmployeeRepositoryInterface;
+use App\Contract\OrderRepositoryInterface;
+use App\Contract\ProductRepositoryInterface;
+use App\Contract\ProductVariantRepointerface;
+use App\Contract\VariantRepositoryInterface;
 use App\Repositories\CategoryEloquentRepository;
-use App\Repositories\CategoryRepositoryInterface;
 use App\Repositories\EmployeeEloquentRepository;
-use App\Repositories\EmployeeRepositoryInterface;
 use App\Repositories\OrderEloquentRepository;
-use App\Repositories\OrderRepositoryInterface;
 use App\Repositories\ProductEloquentRepository;
-use App\Repositories\ProductRepositoryInterface;
 use App\Repositories\ProductVariantEloquentRepo;
-use App\Repositories\ProductVariantRepointerface;
 use App\Repositories\VariantEloquentRepository;
-use App\Repositories\VariantRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

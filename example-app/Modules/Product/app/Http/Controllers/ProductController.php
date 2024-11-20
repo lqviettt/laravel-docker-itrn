@@ -2,9 +2,9 @@
 
 namespace Modules\Product\Http\Controllers;
 
+use App\Contract\ProductRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
-use App\Repositories\ProductRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Product\Models\Product;
@@ -91,7 +91,7 @@ class ProductController extends Controller
     public function destroy(Product $product): JsonResponse
     {
         $this->authorize('delete', $product);
-        $product = $this->productRepository->delete($product);
+        $product->delete($product);
 
         return response()->json($product);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Contract\EmployeeRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Employee\Models\Employee;
 

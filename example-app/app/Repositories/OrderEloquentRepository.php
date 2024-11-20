@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Contract\OrderRepositoryInterface;
 use App\Jobs\SendOrderEmailJob;
 use App\Repositories\EloquentRepository;
 use Illuminate\Database\Eloquent\Model;

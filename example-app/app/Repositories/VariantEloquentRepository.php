@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Contract\VariantRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Product\Models\VariantOption;
 
