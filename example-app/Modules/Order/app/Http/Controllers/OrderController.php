@@ -110,9 +110,8 @@ class OrderController extends Controller
     public function destroy(Order $order): JsonResponse
     {
         $this->authorize('delete', $order);
-        $order = $this->orderRepository->delete($order);
+        $order->delete($order);
 
         return response()->json($order);
     }
 }
-

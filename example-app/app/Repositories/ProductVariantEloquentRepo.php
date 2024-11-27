@@ -6,6 +6,7 @@ use App\Contract\ProductVariantRepointerface;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use Modules\Product\Models\ProductVariant;
+use Modules\Product\Models\VariantOption;
 
 class ProductVariantEloquentRepo extends EloquentRepository implements ProductVariantRepointerface
 {
@@ -22,14 +23,11 @@ class ProductVariantEloquentRepo extends EloquentRepository implements ProductVa
 
     public function createProductVariant(array $data, $productId)
     {
-        dd($this->_model); // null ?
+        $variantOption = VariantOption::findOrFail($data['variant_option_id']);
 
-        $variantOption = $this->_model->variantOption->findOrFail($data['variant_option_id']);
-
-        $allowedTypes = ['color', 'storage'];
-        if (in_array($variantOption->type, $allowedTypes) && $data['value'] !== $variantOption->name) {
+        if ($variantOption->type === 'color' && $data['value'] !== $variantOption->name) {
             throw new InvalidArgumentException(
-                "Invalid {$variantOption->type} value. Expected: {$variantOption->name}"
+                "Invalid color value. Expected: {$variantOption->name}"
             );
         }
 
@@ -37,6 +35,7 @@ class ProductVariantEloquentRepo extends EloquentRepository implements ProductVa
             'product_id' => $productId,
             'variant_option_id' => $data['variant_option_id'],
             'value' => $data['value'],
+            'quantity' => $data['quantity'],
             'price' => $data['price'],
         ]);
     }
@@ -45,10 +44,9 @@ class ProductVariantEloquentRepo extends EloquentRepository implements ProductVa
     {
         $variantOption = $model->variantOption->findOrFail($data['variant_option_id']);
 
-        $allowedTypes = ['color', 'storage'];
-        if (in_array($variantOption->type, $allowedTypes) && $data['value'] !== $variantOption->name) {
+        if ($variantOption->type === 'color' && $data['value'] !== $variantOption->name) {
             throw new InvalidArgumentException(
-                "Invalid {$variantOption->type} value. Expected: {$variantOption->name}"
+                "Invalid color value. Expected: {$variantOption->name}"
             );
         }
 

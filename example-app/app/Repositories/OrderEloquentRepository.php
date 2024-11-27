@@ -28,16 +28,20 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
 
     public function createOrder(array $orderData, array $orderItems)
     {
-
         $order = $this->_model::create($orderData);
         $order->products()->attach($orderItems);
 
         foreach ($orderItems as $item) {
-            $order->products()->where('products.id', $item['product_id'])
-                ->decrement('products.quantity', $item['quantity']);
+            if (isset($item['product_variant_id'])) {
+                $order->product_variants()->where('product_variants.id', $item['product_variant_id'])
+                    ->decrement('product_variants.quantity', $item['quantity']);
+            } else {
+                $order->products()->where('products.id', $item['product_id'])
+                    ->decrement('products.quantity', $item['quantity']);
+            }
         }
-        
-        $order->load('products');
+
+        $order->load('products', 'product_variants');
         SendOrderEmailJob::dispatch($order);
 
         return $order;
@@ -61,6 +65,6 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
 
     public function find(Model $model)
     {
-        return $model->load('orderItem.product');
+        return $model->load('orderItem.product', 'orderItem.product_variant');
     }
 }
