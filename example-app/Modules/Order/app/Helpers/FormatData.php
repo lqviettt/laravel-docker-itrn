@@ -36,6 +36,7 @@ class FormatData
                         'order_id' => $item->order_id ?? null,
                         'product_id' => $item->product->id ?? null,
                         'product_name' => $item->product->name ?? null,
+                        'weight' => $item->product->weight ?? null,
                         'product_variant_id' => $item->product_variant->id ?? null,
                         'product_variant_name' => $item->product_variant->value ?? null,
                         'quantity' => $item->quantity ?? null,
