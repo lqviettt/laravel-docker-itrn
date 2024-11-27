@@ -2,9 +2,9 @@
 
 namespace Modules\Product\Http\Controllers;
 
+use App\Contract\ProductRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
-use App\Repositories\ProductRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Product\Models\Product;
@@ -14,7 +14,7 @@ class ProductController extends Controller
     /**
      * __construct
      *
-     * @param  ProductRepositoryInterface $productRepository
+     * @param  mixed $productRepository
      * @return void
      */
     public function __construct(protected ProductRepositoryInterface $productRepository) {}
@@ -31,7 +31,9 @@ class ProductController extends Controller
         $query = $this->productRepository
             ->builderQuery()
             ->searchByNameCode($request->search)
-            ->SearchByCategory($request->categoryId);
+            ->searchByCategory($request->categoryId);
+
+        $query = $query->with('variants');
 
         return response()->json($query->paginate($perPage));
     }
@@ -89,7 +91,7 @@ class ProductController extends Controller
     public function destroy(Product $product): JsonResponse
     {
         $this->authorize('delete', $product);
-        $product->delete();
+        $product->delete($product);
 
         return response()->json($product);
     }

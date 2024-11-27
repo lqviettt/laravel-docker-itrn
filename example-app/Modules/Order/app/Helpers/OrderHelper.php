@@ -3,13 +3,18 @@
 namespace Modules\Order\Helpers;
 
 use Modules\Product\Models\Product;
+use Modules\Product\Models\ProductVariant;
 
 class OrderHelper
 {
     public static function cancelOrder($order, $oldOrderItems)
     {
         $oldOrderItems->each(function ($item) {
-            $item->product->increment('quantity', $item->quantity);
+            if (isset($item->product_variant_id)) {
+                $item->product_variant->increment('quantity', $item->quantity);
+            } else {
+                $item->product->increment('quantity', $item->quantity);
+            }
         });
     }
 
@@ -19,8 +24,13 @@ class OrderHelper
             $oldItem = $oldItemsByProductId->get($item['product_id']);
             $quantityChange = $item['quantity'] - ($oldItem->quantity ?? 0);
 
-            Product::where('id', $item['product_id'])
-                ->decrement('quantity', $quantityChange);
+            if (isset($item['product_variant_id'])) {
+                ProductVariant::where('id', $item['product_variant_id'])
+                    ->decrement('quantity', $quantityChange);
+            } else {
+                Product::where('id', $item['product_id'])
+                    ->decrement('quantity', $quantityChange);
+            }
 
             if ($oldItem) {
                 $oldItem->update([
@@ -37,7 +47,12 @@ class OrderHelper
     {
         $oldItems->whereNotIn('product_id', $orderItems->pluck('product_id'))
             ->each(function ($oldItem) {
-                $oldItem->product->increment('quantity', $oldItem->quantity);
+                if (isset($oldItem->product_variant_id)) {
+                    $oldItem->product_variant->increment('quantity', $oldItem->quantity);
+                } else {
+                    $oldItem->product->increment('quantity', $oldItem->quantity);
+                }
+
                 $oldItem->delete();
             });
     }

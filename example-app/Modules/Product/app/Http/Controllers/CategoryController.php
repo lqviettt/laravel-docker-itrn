@@ -2,27 +2,22 @@
 
 namespace Modules\Product\Http\Controllers;
 
+use App\Contract\CategoryRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
-use App\Repositories\CategoryRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Product\Models\Category;
 
 class CategoryController extends Controller
 {
-    protected $categoryRepository;
-
     /**
      * __construct
      *
      * @param  mixed $categoryRepository
      * @return void
      */
-    public function __construct(CategoryRepositoryInterface $categoryRepository)
-    {
-        $this->categoryRepository = $categoryRepository;
-    }
+    public function __construct(protected CategoryRepositoryInterface $categoryRepository) {}
 
     /**
      * index
@@ -95,7 +90,7 @@ class CategoryController extends Controller
     public function destroy(Category $category): JsonResponse
     {
         $this->authorize('delete', $category);
-        $category = $this->categoryRepository->delete($category);
+        $category->delete($category);
 
         return response()->json($category);
     }

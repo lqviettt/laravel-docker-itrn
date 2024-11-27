@@ -2,9 +2,9 @@
 
 namespace Modules\Employee\Http\Controllers;
 
+use App\Contract\EmployeeRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmployeeRequest;
-use App\Repositories\EmployeeRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Employee\Models\Employee;
