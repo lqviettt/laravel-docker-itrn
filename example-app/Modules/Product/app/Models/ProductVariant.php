@@ -4,8 +4,6 @@ namespace Modules\Product\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Order\Models\Order;
-use Modules\Order\Models\OrderItem;
 
 class ProductVariant extends Model
 {

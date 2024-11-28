@@ -19,5 +19,6 @@ Route::group([
     'middleware' => 'auth:api'
 ], function () {
     Route::resource('/order', OrderController::class);
-    Route::post('/shipping-fee', [ShippingController::class, 'calculateFee']);
 });
+
+Route::post('/shipping-fee', [ShippingController::class, 'calculateFee']);
