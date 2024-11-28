@@ -9,7 +9,6 @@ use Modules\Product\Models\Product;
 
 class ProductEloquentRepository extends EloquentRepository implements ProductRepositoryInterface
 {
-
     /**
      * get model
      * @return string
@@ -19,11 +18,22 @@ class ProductEloquentRepository extends EloquentRepository implements ProductRep
         return Product::class;
     }
 
+    /**
+     * builderQuery
+     *
+     * @return void
+     */
     public function builderQuery()
     {
         return $this->_model::query();
     }
 
+    /**
+     * find
+     *
+     * @param  mixed $model
+     * @return void
+     */
     public function find(Model $model)
     {
         return $model->load('category', 'variants');

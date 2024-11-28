@@ -18,7 +18,7 @@ class ProductVariantController extends Controller
      * @return void
      */
     public function __construct(protected ProductVariantRepointerface $productVariantRepointerface) {}
-    
+
     /**
      * index
      *
@@ -32,7 +32,7 @@ class ProductVariantController extends Controller
 
         return response()->json($query->paginate($perPage));
     }
-    
+
     /**
      * store
      *
@@ -50,7 +50,7 @@ class ProductVariantController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
-    
+
     /**
      * show
      *
@@ -63,7 +63,7 @@ class ProductVariantController extends Controller
 
         return response()->json($pvariant);
     }
-    
+
     /**
      * update
      *
@@ -71,7 +71,7 @@ class ProductVariantController extends Controller
      * @param  ProductVariant $pvariantId
      * @return JsonResponse
      */
-    public function update(ProductVariantRequest $request, ProductVariant $pvariantId): JsonResponse
+    public function update(ProductVariantRequest $request, $pvariantId): JsonResponse
     {
         $validatedData = $request->validated();
         try {
@@ -81,7 +81,7 @@ class ProductVariantController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
-    
+
     /**
      * delete
      *

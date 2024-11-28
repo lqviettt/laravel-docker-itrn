@@ -10,7 +10,7 @@ interface ProductVariantRepointerface
 
     public function createProductVariant(array $data, $productId);
 
-    public function updateProductVariant(Model $model, array $data);
+    public function updateProductVariant($id, array $data);
 
     public function find(Model $model);
 }

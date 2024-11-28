@@ -10,22 +10,28 @@ class ShippingController extends Controller
 {
     protected $ghtkService;
 
+    /**
+     * __construct
+     *
+     * @param  mixed $ghtkService
+     * @return void
+     */
     public function __construct(GHTKService $ghtkService)
     {
         $this->ghtkService = $ghtkService;
     }
 
+    /**
+     * calculateFee
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function calculateFee(ShippingFeeRequest $request)
     {
         try {
             $validateData = $request->validated();
-            $fee = $this->ghtkService->calculateShippingFee(
-                $validateData['shipping_province'],
-                $validateData['shipping_district'],
-                $validateData['shipping_address_detail'],
-                $validateData['total_weight'],
-                $validateData['total_price']
-            );
+            $fee = $this->ghtkService->calculateShippingFee($validateData);
 
             return response()->json([
                 'success' => true,

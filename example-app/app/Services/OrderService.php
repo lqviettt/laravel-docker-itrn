@@ -1,13 +1,20 @@
 <?php
 
-namespace Modules\Order\Helpers;
+namespace App\Services;
 
 use Modules\Product\Models\Product;
 use Modules\Product\Models\ProductVariant;
 
-class OrderHelper
+class OrderService
 {
-    public static function cancelOrder($order, $oldOrderItems)
+    /**
+     * cancelOrder
+     *
+     * @param  mixed $order
+     * @param  mixed $oldOrderItems
+     * @return void
+     */
+    public function cancelOrder($order, $oldOrderItems)
     {
         $oldOrderItems->each(function ($item) {
             if (isset($item->product_variant_id)) {
@@ -18,7 +25,15 @@ class OrderHelper
         });
     }
 
-    public static function updateOrderItems($orderItems, $oldItemsByProductId, $order)
+    /**
+     * updateOrderItems
+     *
+     * @param  mixed $orderItems
+     * @param  mixed $oldItemsByProductId
+     * @param  mixed $order
+     * @return void
+     */
+    public function updateOrderItems($orderItems, $oldItemsByProductId, $order)
     {
         $orderItems->each(function ($item) use ($oldItemsByProductId, $order) {
             $oldItem = $oldItemsByProductId->get($item['product_id']);
@@ -35,7 +50,7 @@ class OrderHelper
             if ($oldItem) {
                 $oldItem->update([
                     'quantity' => $item['quantity'],
-                    'price' => $item['price']
+                    'price' => $item['price'],
                 ]);
             } else {
                 $order->orderItem()->create($item);
@@ -43,7 +58,14 @@ class OrderHelper
         });
     }
 
-    public static function removeDeletedItems($oldItems, $orderItems)
+    /**
+     * removeDeletedItems
+     *
+     * @param  mixed $oldItems
+     * @param  mixed $orderItems
+     * @return void
+     */
+    public function removeDeletedItems($oldItems, $orderItems)
     {
         $oldItems->whereNotIn('product_id', $orderItems->pluck('product_id'))
             ->each(function ($oldItem) {

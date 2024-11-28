@@ -3,13 +3,25 @@
 namespace App\Repositories;
 
 use App\Contract\ProductVariantRepointerface;
+use App\Services\VariantOptionService;
 use Illuminate\Database\Eloquent\Model;
-use InvalidArgumentException;
 use Modules\Product\Models\ProductVariant;
-use Modules\Product\Models\VariantOption;
 
 class ProductVariantEloquentRepo extends EloquentRepository implements ProductVariantRepointerface
 {
+    protected $variantOptionService;
+
+    /**
+     * __construct
+     *
+     * @param  VariantOptionService $variantOptionService
+     * @return void
+     */
+    public function __construct(VariantOptionService $variantOptionService)
+    {
+        parent::__construct();
+        $this->variantOptionService = $variantOptionService;
+    }
 
     public function getModel()
     {
@@ -23,13 +35,8 @@ class ProductVariantEloquentRepo extends EloquentRepository implements ProductVa
 
     public function createProductVariant(array $data, $productId)
     {
-        $variantOption = VariantOption::findOrFail($data['variant_option_id']);
-
-        if ($variantOption->type === 'color' && $data['value'] !== $variantOption->name) {
-            throw new InvalidArgumentException(
-                "Invalid color value. Expected: {$variantOption->name}"
-            );
-        }
+        $variantOption = $this->variantOptionService->findOrFail($data['variant_option_id']);
+        $this->variantOptionService->validate($data, $variantOption);
 
         return $this->create([
             'product_id' => $productId,
@@ -40,15 +47,11 @@ class ProductVariantEloquentRepo extends EloquentRepository implements ProductVa
         ]);
     }
 
-    public function updateProductVariant(Model $model, array $data)
+    public function updateProductVariant($id, array $data)
     {
-        $variantOption = $model->variantOption->findOrFail($data['variant_option_id']);
-
-        if ($variantOption->type === 'color' && $data['value'] !== $variantOption->name) {
-            throw new InvalidArgumentException(
-                "Invalid color value. Expected: {$variantOption->name}"
-            );
-        }
+        $model = $this->builderQuery()->findOrFail($id);
+        $variantOption = $this->variantOptionService->findOrFail($data['variant_option_id']);
+        $this->variantOptionService->validate($data, $variantOption);
 
         return $this->update($model, $data);
     }
