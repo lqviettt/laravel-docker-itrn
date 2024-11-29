@@ -24,6 +24,7 @@ use Modules\Product\Http\Controllers\VariantOptionController;
 Route::group([
     'middleware' => 'auth:api'
 ], function () {
+<<<<<<< HEAD
     Route::post('/product/{productId}/variant', [ProductVariantController::class, 'store']);
     Route::put('/product-variant/{pvariantId}', [ProductVariantController::class, 'update']);
     Route::get('/product-variant/{pvariantId}', [ProductVariantController::class, 'show']);
@@ -34,3 +35,7 @@ Route::resource('/product', ProductController::class);
 Route::resource('/category', CategoryController::class);
 Route::resource('/variant', VariantOptionController::class);
 Route::get('/product-variant', [ProductVariantController::class, 'index']);
+=======
+});
+
+Route::resource('/cat
