@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Contract;
 
 use Illuminate\Database\Eloquent\Model;
 
-interface CategoryRepositoryInterface
+interface VariantRepositoryInterface
 {
     public function builderQuery();
 

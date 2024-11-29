@@ -38,9 +38,12 @@ class OrderRequest extends FormRequest
             'customer_phone' => 'required|string|max:10',
             'customer_email' => 'required|email',
             'status' => 'required|in:pending,shipping,delivered,canceled',
-            'shipping_address' => 'required|string|max:255',
+            'shipping_province' => 'required|string|max:70',
+            'shipping_district' => 'required|string|max:70',
+            'shipping_address_detail' => 'required|string|max:70',
             'order_items' => 'required|array',
             'order_items.*.product_id' => 'required|exists:products,id',
+            'order_items.*.product_variant_id' => 'nullable|exists:product_variants,id',
             'order_items.*.quantity' => 'required|integer|min:1',
             'order_items.*.price' => 'required|integer',
         ];
@@ -49,7 +52,7 @@ class OrderRequest extends FormRequest
     public function storeOrder()
     {
         $nameParts = explode(' ', $this->customer_name);
-        $firstname = array_pop($nameParts); 
+        $firstname = array_pop($nameParts);
         $lastname = implode(' ', $nameParts);
 
         return [
@@ -58,7 +61,9 @@ class OrderRequest extends FormRequest
             'lastname' => $lastname,
             'customer_phone' => $this->customer_phone,
             'customer_email' => $this->customer_email,
-            'shipping_address' => $this->shipping_address,
+            'shipping_province' => $this->shipping_province,
+            'shipping_district' => $this->shipping_district,
+            'shipping_address_detail' => $this->shipping_address_detail,
             'status' => $this->status ?? 'default_status',
         ];
     }
@@ -66,7 +71,7 @@ class OrderRequest extends FormRequest
     public function updateOrder()
     {
         $nameParts = explode(' ', $this->customer_name);
-        $firstname = array_pop($nameParts); 
+        $firstname = array_pop($nameParts);
         $lastname = implode(' ', $nameParts);
 
         return [
@@ -75,7 +80,9 @@ class OrderRequest extends FormRequest
             'lastname' => $lastname,
             'customer_phone' => $this->customer_phone,
             'customer_email' => $this->customer_email,
-            'shipping_address' => $this->shipping_address,
+            'shipping_province' => $this->shipping_province,
+            'shipping_district' => $this->shipping_district,
+            'shipping_address_detail' => $this->shipping_address_detail,
             'status' => $this->status,
             'order_items' => $this->order_items
         ];

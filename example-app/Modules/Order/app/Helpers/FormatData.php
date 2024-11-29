@@ -29,13 +29,18 @@ class FormatData
                 'customer_phone' => $order->customer_phone ?? null,
                 'customer_email' => $order->customer_email ?? null,
                 'status' => $order->status ?? null,
-                'shipping_address' => $order->shipping_address ?? null,
+                'shipping_address' => ($order->shipping_province ?? '')
+                    . ', ' . ($order->shipping_district ?? '')
+                    . ', ' . ($order->shipping_address_detail ?? ''),
                 'order_item' => $order->orderItem->map(function ($item) {
                     return [
                         'id' => $item->id ?? null,
                         'order_id' => $item->order_id ?? null,
                         'product_id' => $item->product->id ?? null,
                         'product_name' => $item->product->name ?? null,
+                        'weight' => $item->product->weight ?? null,
+                        'product_variant_id' => $item->product_variant->id ?? null,
+                        'product_variant_name' => $item->product_variant->value ?? null,
                         'quantity' => $item->quantity ?? null,
                         'price' => $item->price ?? null,
                     ];

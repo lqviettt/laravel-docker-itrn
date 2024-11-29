@@ -6,13 +6,14 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
 use Modules\Product\Models\Product;
+use Modules\Product\Models\ProductVariant;
 
 class Order extends BaseModel
 {
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['code', 'created_by', 'firstname', 'lastname', 'customer_phone', 'customer_email', 'status', 'shipping_address'];
+    protected $fillable = ['code', 'created_by', 'firstname', 'lastname', 'customer_phone', 'customer_email', 'status', 'shipping_province', 'shipping_district', 'shipping_address_detail'];
 
     public function orderItem()
     {
@@ -23,6 +24,11 @@ class Order extends BaseModel
     {
         return $this->belongsToMany(Product::class, 'order_items', 'order_id', 'product_id')
             ->withPivot('quantity', 'price');
+    }
+
+    public function product_variants()
+    {
+        return $this->belongsToMany(ProductVariant::class, 'order_items', 'order_id', 'product_variant_id');
     }
 
     public function logs()

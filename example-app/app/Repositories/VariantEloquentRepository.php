@@ -2,20 +2,20 @@
 
 namespace App\Repositories;
 
-use App\Contract\ProductRepositoryInterface;
-use App\Repositories\EloquentRepository;
+use App\Contract\VariantRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Product\Models\Product;
+use Modules\Product\Models\VariantOption;
 
-class ProductEloquentRepository extends EloquentRepository implements ProductRepositoryInterface
+class VariantEloquentRepository extends EloquentRepository implements VariantRepositoryInterface
 {
     /**
-     * get model
-     * @return string
+     * getModel
+     *
+     * @return void
      */
     public function getModel()
     {
-        return Product::class;
+        return VariantOption::class;
     }
 
     /**
@@ -36,6 +36,6 @@ class ProductEloquentRepository extends EloquentRepository implements ProductRep
      */
     public function find(Model $model)
     {
-        return $model->load('category', 'variants');
+        return $model->load('productVariants');
     }
 }

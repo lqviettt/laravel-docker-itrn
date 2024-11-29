@@ -12,8 +12,8 @@ class Product extends BaseModel
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['name', 'code', 'quantity', 'price', 'description',  'category_id', 'status'];
-    protected $hidden = ['created_at','updated_at'];
+    protected $fillable = ['name', 'code', 'quantity', 'price', 'weight', 'description',  'category_id', 'status'];
+    protected $hidden = ['created_at', 'updated_at'];
     public $timestamps = false;
 
     public function category()
@@ -30,6 +30,11 @@ class Product extends BaseModel
     {
         return $this->belongsToMany(Order::class, 'order_items', 'product_id', 'order_id')
             ->withPivot('quantity', 'price');
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
     }
 
     public function scopeSearchByCategory($query, $categoryId)
@@ -53,4 +58,3 @@ class Product extends BaseModel
         );
     }
 }
-
