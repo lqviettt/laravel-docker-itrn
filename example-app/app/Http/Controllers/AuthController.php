@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\AuthRequest;
+use App\Jobs\SendPasswordResetEmail;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -20,7 +21,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'verify']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'verify', 'forgotPassword', 'resetPassword']]);
     }
 
     /**
@@ -57,7 +58,7 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Successfully logged out']);
     }
-    
+
     /**
      * register
      *
@@ -76,7 +77,7 @@ class AuthController extends Controller
         SendVerificationEmail::dispatch($user);
         return response()->json($user);
     }
-    
+
     /**
      * verify
      *
@@ -110,7 +111,7 @@ class AuthController extends Controller
             'expires_in' => JWTAuth::factory()->getTTL() * 60
         ]);
     }
-    
+
     /**
      * profile
      *
@@ -121,5 +122,44 @@ class AuthController extends Controller
         $profile = auth()->user();
 
         return response()->json($profile);
+    }
+
+    public function forgotPassword(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        $user = User::where('email', $request->input('email'))->first();
+        $resetCode = Str::random(6);
+        $user->password_reset_code = $resetCode;
+        $user->save();
+
+        SendPasswordResetEmail::dispatch($user);
+
+        return response()->json(['message' => 'Đã gửi email đặt lại mật khẩu.']);
+    }
+
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'reset_code' => 'required|string|exists:users,password_reset_code',
+            'new_password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = User::where('email', $request->input('email'))
+            ->where('password_reset_code', $request->input('reset_code'))
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'Mã xác minh không hợp lệ'], 400);
+        }
+
+        $user->password = bcrypt($request->input('new_password'));
+        $user->password_reset_code = null;
+        $user->save();
+
+        return response()->json(['message' => 'Mật khẩu đã được đặt lại thành công']);
     }
 }
