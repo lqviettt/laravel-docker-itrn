@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Order\Http\Controllers\OrderController;
+use Modules\Shipping\Http\Controllers\ShippingController;
 
 /*
  *--------------------------------------------------------------------------
@@ -14,8 +14,9 @@ use Modules\Order\Http\Controllers\OrderController;
  *
 */
 
-Route::group([
-    'middleware' => 'auth:api'
-], function () {
-    Route::resource('/order', OrderController::class);
-});
+// Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
+//     Route::apiResource('shipping', ShippingController::class)->names('shipping');
+// });
+
+Route::resource('/shipping', ShippingController::class);
+Route::post('/shipping-fee', [ShippingController::class, 'calculateFee']);

@@ -30,12 +30,4 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
-    'ghtk' => [
-        'default_pick_province' => env('DEFAULT_PICK_PROVINCE'),
-        'default_pick_district' => env('DEFAULT_PICK_DISTRICT'),
-        'default_pick_address' => env('DEFAULT_PICK_ADDRESS'),
-        'default_pick_ward' => env('DEFAULT_PICK_WARD', null),
-    ],
-
 ];
