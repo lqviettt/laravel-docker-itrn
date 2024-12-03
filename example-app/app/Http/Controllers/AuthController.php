@@ -132,7 +132,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->input('email'))->first();
         $resetCode = Str::random(6);
-        $user->password_reset_code = $resetCode;
+        $user->remember_token = $resetCode;
         $user->save();
 
         SendPasswordResetEmail::dispatch($user);
@@ -144,12 +144,12 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email|exists:users,email',
-            'reset_code' => 'required|string|exists:users,password_reset_code',
+            'reset_code' => 'required|string|exists:users,remember_token',
             'new_password' => 'required|string|min:6|confirmed',
         ]);
 
         $user = User::where('email', $request->input('email'))
-            ->where('password_reset_code', $request->input('reset_code'))
+            ->where('remember_token', $request->input('reset_code'))
             ->first();
 
         if (!$user) {
@@ -157,7 +157,7 @@ class AuthController extends Controller
         }
 
         $user->password = bcrypt($request->input('new_password'));
-        $user->password_reset_code = null;
+        $user->remember_token = null;
         $user->save();
 
         return response()->json(['message' => 'Mật khẩu đã được đặt lại thành công']);
