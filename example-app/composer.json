@@ -39,7 +39,9 @@
             "Modules\\Employee\\Database\\Factories\\": "Modules/Employee/database/factories/",
             "Modules\\Employee\\Database\\Seeders\\": "Modules/Employee/database/seeders/",
             "Modules\\Order\\Database\\Factories\\": "Modules/Order/database/factories/",
-            "Modules\\Order\\Database\\Seeders\\": "Modules/Order/database/seeders/"
+            "Modules\\Order\\Database\\Seeders\\": "Modules/Order/database/seeders/",
+            "Modules\\Shipping\\Database\\Factories\\": "Modules/Shipping/database/factories/",
+            "Modules\\Shipping\\Database\\Seeders\\": "Modules/Shipping/database/seeders/"
         }
     },
     "autoload-dev": {
