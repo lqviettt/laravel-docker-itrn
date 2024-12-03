@@ -3,5 +3,6 @@
     "Category": true,
     "Product": true,
     "Order": true,
-    "Employee": true
+    "Employee": true,
+    "Shipping": true
 }

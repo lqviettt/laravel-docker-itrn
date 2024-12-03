@@ -22,11 +22,13 @@ class ShippingFeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'shipping_province' => 'required|string',
-            'shipping_district' => 'required|string',
-            'shipping_address_detail' => 'nullable|string',
-            'total_weight' => 'required|integer',
-            'total_price' => 'required|integer',
+            'service_type_id' => 'required|in:2,5',
+            'province' => 'required|string',
+            'district' => 'required|string',
+            'ward' => 'nullable|string',
+            'address' => 'nullable|string',
+            'weight' => 'required|integer',
+            'value' => 'required|integer',
         ];
     }
 }

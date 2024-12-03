@@ -6,7 +6,18 @@ use Illuminate\Support\Facades\Http;
 
 class GHTKService
 {
+    /**
+     * apiUrl
+     *
+     * @var mixed
+     */
     protected $apiUrl;
+
+    /**
+     * apiToken
+     *
+     * @var mixed
+     */
     protected $apiToken;
 
     /**
@@ -35,20 +46,22 @@ class GHTKService
             'Token' => $this->apiToken,
             'Content-Type' => 'application/json',
         ])->get("{$this->apiUrl}/services/shipment/fee", [
-            'pick_province' => config('services.ghtk.default_pick_province'),
-            'pick_district' => config('services.ghtk.default_pick_district'),
-            'pick_address' => config('services.ghtk.default_pick_address'),
-            'province' => $data['shipping_province'],
-            'district' => $data['shipping_district'],
-            'address' => $data['shipping_address_detail'],
-            'weight' => $data['total_weight'],
-            'value' => $data['total_price'],
+            'pick_province' => env('DEFAULT_PICK_PROVINCE'),
+            'pick_district' => env('DEFAULT_PICK_DISTRICT'),
+            'pick_address' => env('DEFAULT_PICK_ADDRESS'),
+            'province' => $data['province'],
+            'district' => $data['district'],
+            'ward' => $data['ward'],
+            'address' => $data['address'],
+            'weight' => $data['weight'],
+            'value' => $data['value'],
         ]);
 
         if ($response->successful()) {
             return $response->json();
+            // return $response->json()['fee']['fee'] ?? null;
         }
 
-        throw new \Exception('Failed to calculate shipping fee: ' . $response->body());
+        throw new \Exception('GHTK Error: ' . $response->body());
     }
 }
