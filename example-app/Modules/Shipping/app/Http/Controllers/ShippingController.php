@@ -53,8 +53,13 @@ class ShippingController extends Controller
                 return response()->json(['error' => 'Địa chỉ không hợp lệ'], 400);
             }
 
-            $ghtkFee = $this->ghtkService->calculateShippingFee($validateData);
-            $ghnFee = $this->ghnService->calculateShippingFee($location['district'], $location['ward'], $validateData);
+            $ghtkFee = $this->calculateWithErrorHandling(function () use ($validateData) {
+                return $this->ghtkService->calculateShippingFee($validateData);
+            });
+
+            $ghnFee = $this->calculateWithErrorHandling(function () use ($location, $validateData) {
+                return $this->ghnService->calculateShippingFee($location['district'], $location['ward'], $validateData);
+            });
 
             return response()->json([
                 'success' => true,
@@ -66,6 +71,21 @@ class ShippingController extends Controller
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 400);
+        }
+    }
+
+    /**
+     * calculateWithErrorHandling
+     *
+     * @param  mixed $callback
+     * @return void
+     */
+    private function calculateWithErrorHandling(callable $callback)
+    {
+        try {
+            return $callback();
+        } catch (\Exception $e) {
+            return ['error' => 'API Error: ' . $e->getMessage()];
         }
     }
 
