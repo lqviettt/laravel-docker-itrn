@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\AuthRequest;
 use App\Jobs\SendPasswordResetEmail;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -124,6 +125,12 @@ class AuthController extends Controller
         return response()->json($profile);
     }
 
+    /**
+     * forgotPassword
+     *
+     * @param  mixed $request
+     * @return JsonResponse
+     */
     public function forgotPassword(Request $request): JsonResponse
     {
         $request->validate([
@@ -140,6 +147,12 @@ class AuthController extends Controller
         return response()->json(['message' => 'Đã gửi email đặt lại mật khẩu.']);
     }
 
+    /**
+     * resetPassword
+     *
+     * @param  mixed $request
+     * @return JsonResponse
+     */
     public function resetPassword(Request $request): JsonResponse
     {
         $request->validate([
@@ -161,5 +174,31 @@ class AuthController extends Controller
         $user->save();
 
         return response()->json(['message' => 'Mật khẩu đã được đặt lại thành công']);
+    }
+
+    /**
+     * changePassword
+     *
+     * @param  mixed $request
+     * @return JsonResponse
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $request->validate([
+            'old_password' => 'required|string',
+            'new_password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = auth()->user();
+        $user_check = User::where('user_name', $user->user_name)->first();
+
+        if (Hash::check($request->input('old_password'), $user->password)) {
+            $user_check->password = bcrypt($request->input('new_password'));
+            $user_check->save();
+
+            return response()->json(['message' => 'Đổi mật khẩu thành công!']);
+        } else {
+            return response()->json(['error' => 'Mật khẩu cũ không đúng, vui lòng nhập lại.'], 400);
+        }
     }
 }
