@@ -2,11 +2,6 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
-use Modules\Employee\Http\Controllers\EmployeeController;
-use Modules\Employee\Http\Controllers\PermissionController;
-use Modules\Order\Http\Controllers\OrderController;
-use Modules\Product\Http\Controllers\CategoryController;
-use Modules\Product\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,4 +29,5 @@ Route::group([
 ], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
 });
