@@ -55,4 +55,6 @@ class GHNService
 
         throw new \Exception('GHN Error: ' . $response->body());
     }
+
+    public function checkSupport() {}
 }
