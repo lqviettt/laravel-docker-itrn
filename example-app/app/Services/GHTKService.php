@@ -64,4 +64,6 @@ class GHTKService
 
         throw new \Exception('GHTK Error: ' . $response->body());
     }
+
+    public function checkSupport() {}
 }
