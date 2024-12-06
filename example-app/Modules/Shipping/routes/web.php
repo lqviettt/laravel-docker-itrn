@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Shipping\Http\Controllers\ShippingController;
+use Modules\Shipping\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +14,8 @@ use Modules\Shipping\Http\Controllers\ShippingController;
 |
 */
 
-Route::group([], function () {
-    Route::resource('shipping', ShippingController::class)->names('shipping');
-});
+// Route::group([], function () {
+//     Route::resource('shipping', ShippingController::class)->names('shipping');
+// });
+
+Route::get('/return-vnpay', [PaymentController::class, 'returnPay']);
