@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Shipping\Http\Controllers\PaymentController;
 use Modules\Shipping\Http\Controllers\ShippingController;
 
 /*
@@ -20,3 +21,4 @@ use Modules\Shipping\Http\Controllers\ShippingController;
 
 Route::resource('/shipping', ShippingController::class);
 Route::post('/shipping-fee', [ShippingController::class, 'calculateFee']);
+Route::post('/vnpay-payment', [PaymentController::class, 'create']);
