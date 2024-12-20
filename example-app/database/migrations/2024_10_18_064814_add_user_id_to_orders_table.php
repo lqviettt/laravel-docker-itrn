@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            // $table->string('created_by')->after('code')->index()->nullable(); 
+            $table->string('created_by')->after('code')->index()->nullable();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            // $table->dropColumn('created_by');
+            $table->dropColumn('created_by');
         });
     }
 };
