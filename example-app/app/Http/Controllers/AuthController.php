@@ -87,15 +87,21 @@ class AuthController extends Controller
      */
     public function verify(Request $request): JsonResponse
     {
-        $user = User::where('verification_code', $request->input('code'))->first();
-        if ($user) {
+        $user = User::where('email', $request->input('email'))->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'Có lỗi xảy ra khi xác minh']);
+        }
+
+        if ($user->verification_code == $request->input('code')) {
             $user->is_verified = true;
             $user->email_verified_at = now();
             $user->save();
 
             return response()->json(['message' => 'Xác minh email thành công']);
         }
-        return response()->json(['message' => 'Mã Xác minh không hợp lệ']);
+
+        return response()->json(['message' => 'Mã xác minh không hợp lệ']);
     }
 
     /**

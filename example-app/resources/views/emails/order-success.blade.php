@@ -10,14 +10,22 @@
     <p>Mã đơn hàng: {{ $order->code }}</p>
     <p>Tên khách hàng: {{ $order->lastname }} {{ $order->firstname }}</p>
     <p>Số điện thoại: {{ $order->customer_phone }}</p>
-    <p>Trạng thái đơn hàng:{{ $order->status }}</p>
+    <p>Trạng thái đơn hàng: {{ $order->status }}</p>
     <p>Địa chỉ giao hàng: {{ $order->shipping_address }}</p>
 
     <h3>Chi tiết đơn hàng:</h3>
     <ul>
         @foreach ($order->products as $product)
         <li>
-            {{ $product->name }} - Quantity: {{ $product->pivot->quantity }} - Price: {{ $product->price }}
+            {{ $product->name }}
+            @if ($product->variants->isNotEmpty())
+            @foreach ($product->variants as $variant)
+            {{ $variant->value }}
+            @endforeach
+            @else
+
+            @endif
+            - Quantity: {{ $product->pivot->quantity }} - Price: {{ $product->price }}
             <br>
             Subtotal: {{ $product->pivot->quantity * $product->price }}
         </li>
