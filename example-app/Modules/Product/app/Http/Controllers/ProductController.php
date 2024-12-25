@@ -33,7 +33,7 @@ class ProductController extends Controller
             ->searchByNameCode($request->search)
             ->searchByCategory($request->category_id);
 
-        return response()->json($query->paginate($perPage));
+        return $this->sendSuccess($query->paginate($perPage));
     }
 
     /**
@@ -48,7 +48,7 @@ class ProductController extends Controller
         $validateData = $request->validated();
         $product = $this->productRepository->create($validateData);
 
-        return response()->json($product);
+        return $this->created($product);
     }
 
     /**
@@ -61,7 +61,7 @@ class ProductController extends Controller
         $this->authorize('view', Product::class);
         $product = $this->productRepository->find($product);
 
-        return response()->json($product);
+        return $this->sendSuccess($product);
     }
 
     /**
@@ -77,7 +77,7 @@ class ProductController extends Controller
         $validateData = $request->validated();
         $product = $this->productRepository->update($product, $validateData);
 
-        return response()->json($product);
+        return $this->updated($product);
     }
 
     /**
@@ -91,6 +91,6 @@ class ProductController extends Controller
         $this->authorize('delete', $product);
         $product->delete($product);
 
-        return response()->json($product);
+        return $this->deteled();
     }
 }

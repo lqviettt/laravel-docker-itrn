@@ -10,8 +10,18 @@ class Employee extends BaseModel
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'firstname', 'lastname', 'code', 'phone', 'date_of_birth', 'gender', 'start_date', 'orders_sold'];
-    protected $hidden = ['created_at','updated_at'];
+    protected $fillable = [
+        'user_id',
+        'firstname',
+        'lastname',
+        'code',
+        'phone',
+        'date_of_birth',
+        'gender',
+        'start_date',
+        'orders_sold',
+    ];
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function permissions()
     {
@@ -45,4 +55,3 @@ class Employee extends BaseModel
         );
     }
 }
-

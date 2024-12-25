@@ -11,8 +11,14 @@ class Category extends BaseModel
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['name', 'status'];
-    protected $hidden = ['created_at','updated_at'];
+    protected $fillable = [
+        'name',
+        'status',
+    ];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
 
     public function product()
     {
@@ -24,7 +30,7 @@ class Category extends BaseModel
         return $query->when(
             !is_null($search),
             fn($query) => $query->where(function ($query) use ($search) {
-                $query->where('name', 'like','%' . $search . '%');
+                $query->where('name', 'like', '%' . $search . '%');
             })
         );
     }

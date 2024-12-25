@@ -39,7 +39,7 @@ class OrderController extends Controller
             ->searchByPhone($request->phone)
             ->searchByCreated($request->created_by);
 
-        return response()->json($formatData->formatData($query->paginate($perPage)));
+        return $this->sendSuccess($formatData->formatData($query->paginate($perPage)));
     }
 
     /**
@@ -55,7 +55,7 @@ class OrderController extends Controller
             $order = $this->orderRepository
                 ->createOrder($request->storeOrder(), $request->order_items);
 
-            return response()->json($order);
+            return $this->created($order);
         });
     }
 
@@ -70,7 +70,7 @@ class OrderController extends Controller
         $this->authorize('view', $order);
         $order = $this->orderRepository->find($order);
 
-        return response()->json($order);
+        return $this->sendSuccess($order);
     }
 
     /**
@@ -94,10 +94,10 @@ class OrderController extends Controller
                 $this->orderRepository->updateOrder($order, $request->updateOrder());
             });
 
-            return response()->json($order->load('orderItem'));
+            return $this->updated($order->load('orderItem'));
         } catch (\Exception $e) {
 
-            return response()->json(['error' => $e->getMessage()], 400);
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -112,6 +112,6 @@ class OrderController extends Controller
         $this->authorize('delete', $order);
         $order->delete($order);
 
-        return response()->json($order);
+        return $this->deteled();
     }
 }

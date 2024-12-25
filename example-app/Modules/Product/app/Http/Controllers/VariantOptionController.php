@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Modules\Product\Models\VariantOption;
 
 class VariantOptionController extends Controller
-{    
+{
     /**
      * __construct
      *
@@ -18,7 +18,7 @@ class VariantOptionController extends Controller
      * @return void
      */
     public function __construct(protected VariantRepositoryInterface $variantRepository) {}
-    
+
     /**
      * index
      *
@@ -29,12 +29,12 @@ class VariantOptionController extends Controller
     {
         $perPage = $request->input('perPage', 10);
         $query = $this->variantRepository
-        ->builderQuery()
-        ->searchByType($request->type);
+            ->builderQuery()
+            ->searchByType($request->type);
 
-        return response()->json($query->paginate($perPage));
+        return $this->sendSuccess($query->paginate($perPage));
     }
-    
+
     /**
      * store
      *
@@ -46,9 +46,9 @@ class VariantOptionController extends Controller
         $validateData = $request->validated();
         $variant = $this->variantRepository->create($validateData);
 
-        return response()->json($variant);
+        return $this->created($variant);
     }
-    
+
     /**
      * show
      *
@@ -59,9 +59,9 @@ class VariantOptionController extends Controller
     {
         $variant = $this->variantRepository->find($variant);
 
-        return response()->json($variant);
+        return $this->sendSuccess($variant);
     }
-    
+
     /**
      * update
      *
@@ -74,9 +74,9 @@ class VariantOptionController extends Controller
         $validateData = $request->validated();
         $variant = $this->variantRepository->update($variant, $validateData);
 
-        return response()->json($variant);
+        return $this->updated($variant);
     }
-    
+
     /**
      * destroy
      *
@@ -87,6 +87,6 @@ class VariantOptionController extends Controller
     {
         $variant->delete($variant);
 
-        return response()->json($variant);
+        return $this->deteled();
     }
 }

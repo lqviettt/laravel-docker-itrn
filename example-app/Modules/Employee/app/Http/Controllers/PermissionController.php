@@ -10,7 +10,7 @@ use Modules\Employee\Models\Employee;
 use Modules\Employee\Models\Permission;
 
 class PermissionController extends Controller
-{        
+{
     /**
      * getPermission
      *
@@ -20,9 +20,9 @@ class PermissionController extends Controller
     {
         $permission = Permission::all();
 
-        return response()->json($permission);
+        return $this->sendSuccess($permission);
     }
-    
+
     /**
      * editPermission
      *
@@ -42,9 +42,9 @@ class PermissionController extends Controller
         $employee->permissions()->attach($data['permission_id']);
         $employee->load('permissions');
 
-        return response()->json($employee);
+        return $this->updated($employee);
     }
-    
+
     /**
      * showPermissions
      *
@@ -55,9 +55,9 @@ class PermissionController extends Controller
     {
         $permissions = $employee->permissions()->get();
 
-        return response()->json($permissions);
+        return $this->sendSuccess($permissions);
     }
-    
+
     /**
      * removePermission
      *
@@ -74,6 +74,6 @@ class PermissionController extends Controller
         $employee->permissions()->detach($request->permission_id);
         $employee->load('permissions');
 
-        return response()->json($employee);
+        return $this->updated($employee);
     }
 }

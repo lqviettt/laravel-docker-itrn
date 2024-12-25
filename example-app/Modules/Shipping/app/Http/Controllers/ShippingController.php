@@ -67,77 +67,9 @@ class ShippingController extends Controller
                 'GHN' => $ghnFee,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 400);
+            return $this->sendError($e->getMessage());
         }
     }
-
-    // /**
-    //  * calculateFee2
-    //  *
-    //  * @param  mixed $request
-    //  * @return void
-    //  */
-    // public function calculateFee(ShippingFeeRequest $request)
-    // {
-    //     try {
-    //         $validateData = $request->validated();
-    //         $location = $this->getLocation($validateData['province'], $validateData['district'], $validateData['ward']);
-
-    //         if (!$location['province'] || !$location['district'] || !$location['ward']) {
-    //             return response()->json(['error' => 'Địa chỉ không hợp lệ'], 400);
-    //         }
-
-    //         $ghtkFee = null;
-    //         $ghnFee = null;
-    //         $ghtkSupported = false;
-    //         $ghnSupported = false;
-
-    //         $ghtkSupported = $this->ghtkService->checkSupport($validateData);
-    //         if ($ghtkSupported) {
-    //             $ghtkFee = $this->ghtkService->calculateShippingFee($validateData);
-    //         }
-
-    //         if ($ghtkSupported) {
-    //             $ghnSupported = $this->ghnService->checkSupport($location['district'], $location['ward'], $validateData);
-    //             if ($ghnSupported) {
-    //                 $ghnFee = $this->ghnService->calculateShippingFee($location['district'], $location['ward'], $validateData);
-    //             }
-    //         }
-
-    //         if (!$ghtkSupported && !$ghnSupported) {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => 'Cả hai dịch vụ đều không hỗ trợ địa chỉ này.',
-    //             ], 400);
-    //         }
-
-    //         $response = [
-    //             'success' => true,
-    //         ];
-
-    //         if ($ghtkSupported) {
-    //             $response['GHTK'] = $ghtkFee;
-    //         } else {
-    //             $response['message'] = 'GHTK không hỗ trợ địa chỉ này';
-    //         }
-
-    //         if ($ghnSupported) {
-    //             $response['GHN'] = $ghnFee;
-    //         } else {
-    //             $response['message'] = 'GHN không hỗ trợ địa chỉ này';
-    //         }
-
-    //         return response()->json($response);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => $e->getMessage(),
-    //         ], 400);
-    //     }
-    // }
 
     /**
      * calculateWithErrorHandling

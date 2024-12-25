@@ -22,8 +22,8 @@ class GHNService
 
     public function __construct()
     {
-        $this->baseUrl = env('GHN_API_URL');
-        $this->token = env('GHN_API_TOKEN');
+        $this->baseUrl = config('app.baseUrl');
+        $this->token = config('app.token');
     }
 
     /**
@@ -38,9 +38,9 @@ class GHNService
     {
         $response = Http::withHeaders([
             'Token' => $this->token,
-            'shop_id' => env('GHN_SHOP_ID'),
+            'shop_id' => config('app.shop_id'),
         ])->post("{$this->baseUrl}/v2/shipping-order/fee", [
-            'from_district_id' => (int) env('FROM_DISTRICT_ID'),
+            'from_district_id' => (int) config('app.from_district_id'),
             'to_district_id' => (int) $district->code,
             'to_ward_code' => (string) $ward->code,
             'weight' => $data['weight'],

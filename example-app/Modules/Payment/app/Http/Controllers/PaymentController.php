@@ -1,8 +1,9 @@
 <?php
 
-namespace Modules\Shipping\Http\Controllers;
+namespace Modules\Payment\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PaymentRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -14,18 +15,13 @@ class PaymentController extends Controller
      * @param  mixed $request
      * @return void
      */
-    public function create(Request $request)
+    public function create(PaymentRequest $request)
     {
-        $validateData = $request->validate([
-            'amount' => 'required|integer',
-            'language' => 'required|string',
-            'bank_code' => 'nullable|string'
-        ]);
-
-        $vnp_TmnCode = env('VNPAY_TMN_CODE');
-        $vnp_HashSecret = env('VNPAY_HASH_KEY');
-        $vnp_Url = env('VNPAY_URL');
-        $vnp_Returnurl = env('VNPAY_RETURN_URL');
+        $validateData = $request->validated();
+        $vnp_TmnCode = config('app.vnp_TmnCode');
+        $vnp_HashSecret = config('app.vnp_HashSecret');
+        $vnp_Url = config('app.vnp_Url');
+        $vnp_Returnurl = config('app.vnp_Returnurl');
 
         $vnp_IpAddr = request()->ip();
         $vnp_TxnRef = rand(1, 10000);
@@ -72,7 +68,7 @@ class PaymentController extends Controller
 
         $vnp_Url = $vnp_Url . "?" . $query;
         if (isset($vnp_HashSecret)) {
-            $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //  
+            $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
             $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
         }
 
@@ -91,7 +87,7 @@ class PaymentController extends Controller
      */
     public function returnPay(Request $request)
     {
-        $vnp_HashSecret = env('VNPAY_HASH_KEY');
+        $vnp_HashSecret = config('app.vnp_HashSecret');
         $vnp_SecureHash = $request->input('vnp_SecureHash');
         $inputData = $request->except('vnp_SecureHash');
 

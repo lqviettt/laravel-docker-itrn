@@ -10,9 +10,8 @@ class Authenticate extends Middleware
 {
     public function handle($request, Closure $next, ...$guards)
     {
-
         if ($request->routeIs('category.index') || $request->routeIs('product.index')) {
-            return $next($request); 
+            return $next($request);
         }
 
         try {

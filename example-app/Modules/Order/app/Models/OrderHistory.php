@@ -11,7 +11,11 @@ class OrderHistory extends Model
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['order_id', 'status', 'description'];
+    protected $fillable = [
+        'order_id',
+        'status',
+        'description',
+    ];
 
     public function order()
     {
