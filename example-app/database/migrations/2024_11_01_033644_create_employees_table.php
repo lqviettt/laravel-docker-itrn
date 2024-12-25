@@ -31,13 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Schema::table('employees', function (Blueprint $table) {
-        //     $table->dropIndex(['firstname']);
-        //     $table->dropIndex(['lastname']);
-        //     $table->dropIndex(['phone']);
-        //     $table->dropUnique(['code']);
-        // });
-
         Schema::dropIfExists('employees');
     }
 };

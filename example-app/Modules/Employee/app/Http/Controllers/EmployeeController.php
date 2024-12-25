@@ -39,7 +39,7 @@ class EmployeeController extends Controller
             ->searchByNameCode($request->search)
             ->searchByPhone($request->phone);
 
-        return response()->json($query->paginate($perPage));
+        return $this->sendSuccess($query->paginate($perPage));
     }
 
     /**
@@ -53,7 +53,7 @@ class EmployeeController extends Controller
         $this->authorize('create', Employee::class);
         $employee = $this->employeeRepository->create($request->newEmployee());
 
-        return response()->json($employee);
+        return $this->created($employee);
     }
 
     /**
@@ -67,7 +67,7 @@ class EmployeeController extends Controller
         $this->authorize('view', $employee);
         $employee = $this->employeeRepository->find($employee);
 
-        return response()->json($employee);
+        return $this->sendSuccess($employee);
     }
 
     /**
@@ -82,7 +82,7 @@ class EmployeeController extends Controller
         $this->authorize('update', $employee);
         $this->employeeRepository->update($employee, $request->updateEmployee());
 
-        return response()->json($employee);
+        return $this->updated($employee);
     }
 
     /**
@@ -94,8 +94,8 @@ class EmployeeController extends Controller
     public function destroy(Employee $employee): JsonResponse
     {
         $this->authorize('delete', $employee);
-        $category = $this->employeeRepository->delete($employee);
+        $employee->delete();
 
-        return response()->json($category);
+        return $this->deteled();
     }
 }

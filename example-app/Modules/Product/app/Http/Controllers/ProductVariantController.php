@@ -30,7 +30,7 @@ class ProductVariantController extends Controller
         $perPage = $request->input('perPage', 10);
         $query = $this->productVariantRepointerface->builderQuery();
 
-        return response()->json($query->paginate($perPage));
+        return $this->sendSuccess($query->paginate($perPage));
     }
 
     /**
@@ -45,9 +45,9 @@ class ProductVariantController extends Controller
         $validatedData = $request->validated();
         try {
             $variant = $this->productVariantRepointerface->createProductVariant($validatedData, $productId);
-            return response()->json($variant, 201);
+            return $this->created($variant);
         } catch (\InvalidArgumentException $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -61,7 +61,7 @@ class ProductVariantController extends Controller
     {
         $pvariant = $this->productVariantRepointerface->find($pvariantId);
 
-        return response()->json($pvariant);
+        return $this->created($pvariant);
     }
 
     /**
@@ -76,9 +76,9 @@ class ProductVariantController extends Controller
         $validatedData = $request->validated();
         try {
             $pvariantId = $this->productVariantRepointerface->updateProductVariant($pvariantId, $validatedData);
-            return response()->json($pvariantId, 201);
+            return $this->updated($pvariantId);
         } catch (\InvalidArgumentException $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -92,6 +92,6 @@ class ProductVariantController extends Controller
     {
         $pvariantId->delete($pvariantId);
 
-        return response()->json($pvariantId);
+        return $this->deteled();
     }
 }

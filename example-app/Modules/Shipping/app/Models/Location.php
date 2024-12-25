@@ -20,5 +20,10 @@ class Location extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ['name', 'type', 'parent_id', 'code'];
+    protected $fillable = [
+        'name',
+        'type',
+        'parent_id',
+        'code',
+    ];
 }

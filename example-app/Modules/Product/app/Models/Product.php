@@ -12,7 +12,16 @@ class Product extends BaseModel
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['name', 'code', 'quantity', 'price', 'weight', 'description',  'category_id', 'status'];
+    protected $fillable = [
+        'name',
+        'code',
+        'quantity',
+        'price',
+        'weight',
+        'description',
+        'category_id',
+        'status',
+    ];
     protected $hidden = ['created_at', 'updated_at'];
     public $timestamps = false;
 
