@@ -7,14 +7,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Product\Models\Product;
 use Modules\Product\Models\ProductVariant;
 
-// use Modules\Order\Database\Factories\OrderItemFactory;
-
 class OrderItem extends Model
 {
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['order_id', 'product_id', 'product_variant_id', 'quantity', 'price'];
+    protected $fillable = [
+        'order_id',
+        'product_id',
+        'product_variant_id',
+        'quantity',
+        'price',
+    ];
 
     public function product()
     {

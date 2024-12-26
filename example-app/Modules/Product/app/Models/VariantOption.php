@@ -10,7 +10,10 @@ class VariantOption extends BaseModel
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['type', 'name'];
+    protected $fillable = [
+        'type',
+        'name',
+    ];
 
     public function productVariants()
     {

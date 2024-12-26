@@ -27,8 +27,8 @@ class GHTKService
      */
     public function __construct()
     {
-        $this->apiUrl = env('GHTK_API_URL');
-        $this->apiToken = env('GHTK_API_TOKEN');
+        $this->apiUrl = config('app.api_url');
+        $this->apiToken = config('app.api_token');
     }
 
     /**
@@ -46,9 +46,9 @@ class GHTKService
             'Token' => $this->apiToken,
             'Content-Type' => 'application/json',
         ])->get("{$this->apiUrl}/services/shipment/fee", [
-            'pick_province' => env('DEFAULT_PICK_PROVINCE'),
-            'pick_district' => env('DEFAULT_PICK_DISTRICT'),
-            'pick_address' => env('DEFAULT_PICK_ADDRESS'),
+            'pick_province' => config('app.pick_province'),
+            'pick_district' => config('app.pick_district'),
+            'pick_address' => config('app.pick_address'),
             'province' => $data['province'],
             'district' => $data['district'],
             'ward' => $data['ward'],

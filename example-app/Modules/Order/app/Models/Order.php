@@ -13,7 +13,43 @@ class Order extends BaseModel
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['code', 'created_by', 'firstname', 'lastname', 'customer_phone', 'customer_email', 'status', 'shipping_province', 'shipping_district', 'shipping_address_detail'];
+    protected $fillable = [
+        'code',
+        'created_by',
+        'firstname',
+        'lastname',
+        'customer_phone',
+        'customer_email',
+        'status',
+        'shipping_province',
+        'shipping_district',
+        'shipping_address_detail',
+    ];
+
+    protected $appends = ['fullname'];
+
+    protected static function booted()
+    {
+        static::creating(function ($order) {
+            $order->created_by = Auth::user()->user_name;
+        });
+
+        static::updating(function ($order) {
+            $order->created_by = Auth::user()->user_name;
+
+            if ($order->status === 'canceled') {
+                $order->logs()->create([
+                    'status' => 'canceled',
+                    'description' => 'Order has been canceled, stock returned.',
+                ]);
+            }
+        });
+    }
+
+    public function getFullnameAttribute()
+    {
+        return $this->lastname . ' ' . $this->firstname;
+    }
 
     public function orderItem()
     {
@@ -34,24 +70,6 @@ class Order extends BaseModel
     public function logs()
     {
         return $this->hasMany(OrderHistory::class);
-    }
-
-    protected static function booted()
-    {
-        static::creating(function ($order) {
-            $order->created_by = Auth::user()->user_name;
-        });
-
-        static::updating(function ($order) {
-            $order->created_by = Auth::user()->user_name;
-
-            if ($order->status === 'canceled') {
-                $order->logs()->create([
-                    'status' => 'canceled',
-                    'description' => 'Order has been canceled, stock returned.',
-                ]);
-            }
-        });
     }
 
     public function scopeSearchByNameCode($query, $search)

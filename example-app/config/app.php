@@ -187,5 +187,21 @@ return [
     ])->toArray(),
 
 
-    'admin_email' => env('ADMIN_EMAIL', 'lqviettt3403@gmail.com'),
+    'admin_email' => env('ADMIN_EMAIL'),
+
+    'api_url' => env('GHTK_API_URL'),
+    'api_token' => env('GHTK_API_TOKEN'),
+    'pick_province' => env('DEFAULT_PICK_PROVINCE'),
+    'pick_district' => env('DEFAULT_PICK_DISTRICT'),
+    'pick_address' => env('DEFAULT_PICK_ADDRESS'),
+
+    'baseUrl' => env('GHN_API_URL'),
+    'token' => env('GHN_API_TOKEN'),
+    'shop_idid' => env('GHN_SHOP_ID'),
+    'from_district_id' => env('FROM_DISTRICT_ID'),
+
+    'vnp_TmnCode' => env('VNPAY_TMN_CODE'),
+    'vnp_HashSecret' => env('VNPAY_HASH_KEY'),
+    'vnp_Url' => env('VNPAY_URL'),
+    'vnp_Returnurl' => env('VNPAY_RETURN_URL'),
 ];

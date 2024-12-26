@@ -33,7 +33,7 @@ class CategoryController extends Controller
             ->searchByName($request->search)
             ->searchByStatus($request->status);
 
-        return response()->json($query->paginate($perPage));
+        return $this->sendSuccess($query->paginate($perPage));
     }
 
     /**
@@ -48,7 +48,7 @@ class CategoryController extends Controller
         $validateData = $request->validated();
         $category = $this->categoryRepository->create($validateData);
 
-        return response()->json($category);
+        return $this->created($category);
     }
 
     /**
@@ -62,7 +62,7 @@ class CategoryController extends Controller
         $this->authorize('view', Category::class);
         $category = $this->categoryRepository->find($category);
 
-        return response()->json($category);
+        return $this->sendSuccess($category);
     }
 
     /**
@@ -78,7 +78,7 @@ class CategoryController extends Controller
         $validateData = $request->validated();
         $this->categoryRepository->update($category, $validateData);
 
-        return response()->json($category);
+        return $this->updated($category);
     }
 
     /**
@@ -92,6 +92,6 @@ class CategoryController extends Controller
         $this->authorize('delete', $category);
         $category->delete($category);
 
-        return response()->json($category);
+        return $this->deteled();
     }
 }

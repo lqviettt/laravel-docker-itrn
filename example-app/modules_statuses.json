@@ -4,5 +4,6 @@
     "Product": true,
     "Order": true,
     "Employee": true,
-    "Shipping": true
+    "Shipping": true,
+    "Payment": true
 }
