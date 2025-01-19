@@ -30,8 +30,8 @@ class OrderController extends Controller
      */
     public function index(Request $request, FormatData $formatData): JsonResponse
     {
-        $perPage = $request->input('perPage', 5);
-        $this->authorize('view', Order::class);
+        $perPage = $request->input('perPage', 7);
+        // $this->authorize('view', Order::class);
         $query = $this->orderRepository
             ->builderQuery()
             ->searchByStatus($request->status)
@@ -50,10 +50,10 @@ class OrderController extends Controller
      */
     public function store(OrderRequest $request): JsonResponse
     {
-        $this->authorize('create', Order::class);
+        // $this->authorize('create', Order::class);
         return DB::transaction(function () use ($request) {
             $order = $this->orderRepository
-                ->createOrder($request->storeOrder(), $request->order_items);
+                ->createOrder($request->storeOrder(), $request->order_item);
 
             return $this->created($order);
         });
@@ -67,7 +67,7 @@ class OrderController extends Controller
      */
     public function show(Order $order): JsonResponse
     {
-        $this->authorize('view', $order);
+        // $this->authorize('view', $order);
         $order = $this->orderRepository->find($order);
 
         return $this->sendSuccess($order);
@@ -82,7 +82,7 @@ class OrderController extends Controller
      */
     public function update(OrderRequest $request, Order $order): JsonResponse
     {
-        $this->authorize('update', $order);
+        // $this->authorize('update', $order);
         if ($order->status === 'canceled') {
             return response()->json([
                 'error' => 'Cannot update a canceled order.'
@@ -109,7 +109,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order): JsonResponse
     {
-        $this->authorize('delete', $order);
+        // $this->authorize('delete', $order);
         $order->delete($order);
 
         return $this->deteled();

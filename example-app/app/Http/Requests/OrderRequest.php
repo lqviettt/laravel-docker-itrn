@@ -41,12 +41,18 @@ class OrderRequest extends FormRequest
             'shipping_province' => 'required|string|max:70',
             'shipping_district' => 'required|string|max:70',
             'shipping_address_detail' => 'required|string|max:70',
-            'order_items' => 'required|array',
-            'order_items.*.product_id' => 'required|exists:products,id',
-            'order_items.*.product_variant_id' => 'nullable|exists:product_variants,id',
-            'order_items.*.quantity' => 'required|integer|min:1',
-            'order_items.*.price' => 'required|integer',
+            'order_item' => 'required|array',
+            'order_item.*.product_id' => 'required|exists:products,id',
+            'order_item.*.product_variant_id' => 'nullable|exists:product_variants,id',
+            'order_item.*.quantity' => 'required|integer|min:1',
+            'order_item.*.price' => 'required|integer',
         ];
+    }
+
+    function generate_rand_code()
+    {
+        $strRandom = uniqid();
+        return strtoupper(substr($strRandom, 6, 6));
     }
 
     public function storeOrder()
@@ -56,7 +62,7 @@ class OrderRequest extends FormRequest
         $lastname = implode(' ', $nameParts);
 
         return [
-            'code' => Str::random(10),
+            'code' => $this->generate_rand_code(),
             'firstname' => $firstname,
             'lastname' => $lastname,
             'customer_phone' => $this->customer_phone,
@@ -84,7 +90,7 @@ class OrderRequest extends FormRequest
             'shipping_district' => $this->shipping_district,
             'shipping_address_detail' => $this->shipping_address_detail,
             'status' => $this->status,
-            'order_items' => $this->order_items
+            'order_item' => $this->order_item
         ];
     }
 }

@@ -41,7 +41,7 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
      */
     public function builderQuery()
     {
-        return $this->_model::query()->with('orderItem.product');
+        return $this->_model::latest()->with('orderItem.product');
     }
 
     /**
@@ -84,7 +84,7 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
         $model->update(['status' => $data['status']]);
         $oldItems = $model->orderItem()->with('product')->get();
         $oldItemsByProductId = $oldItems->keyBy('product_id');
-        $orderItems = collect($data['order_items']);
+        $orderItems = collect($data['order_item']);
 
         if ($data['status'] === 'canceled') {
             $this->orderService->cancelOrder($model, $oldItems);
