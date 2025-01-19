@@ -31,7 +31,11 @@ class FormatData
                 'status' => $order->status ?? null,
                 'shipping_address' => ($order->shipping_province ?? '')
                     . ', ' . ($order->shipping_district ?? '')
+                    . ', ' . ($order->shipping_ward ?? '')
                     . ', ' . ($order->shipping_address_detail ?? ''),
+                'shipping_fee' => $order->shipping_fee ?? null,
+                'total_price' => $order->total_price ?? null,
+                'payment_method' => $order->payment_method ?? null,
                 'order_item' => $order->orderItem->map(function ($item) {
                     return [
                         'id' => $item->id ?? null,

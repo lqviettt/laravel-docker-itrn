@@ -23,7 +23,11 @@ class Order extends BaseModel
         'status',
         'shipping_province',
         'shipping_district',
+        'shipping_ward',
         'shipping_address_detail',
+        'shipping_fee',
+        'total_price',
+        'payment_method',
     ];
 
     protected $appends = ['fullname'];
