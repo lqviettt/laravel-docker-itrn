@@ -19,7 +19,8 @@ class OrderSuccessfulMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Đơn hàng của bạn đã được đặt thành công!')
+        return $this->from('quocviet30042003@gmail.com', 'QuocViet')
+            ->subject('Đơn hàng của bạn đã được đặt thành công!')
             ->view('emails.order-success', [
                 'order' => $this->order
             ]);

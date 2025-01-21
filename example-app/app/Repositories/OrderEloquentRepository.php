@@ -67,7 +67,6 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
         }
 
         $order->load('products', 'product_variants');
-        SendOrderEmailJob::dispatch($order);
 
         return $order;
     }

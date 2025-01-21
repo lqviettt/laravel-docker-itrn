@@ -11,10 +11,10 @@ composer install --no-progress --no-interaction
 
 php artisan key:generate
 php artisan migrate
-php artisan queue:work --timeout=60 &
 php artisan optimize:clear
 php artisan view:clear
 php artisan route:clear
+php artisan queue:work --timeout=60 &
 
 php-fpm -D
 nginx -g "daemon off;"
