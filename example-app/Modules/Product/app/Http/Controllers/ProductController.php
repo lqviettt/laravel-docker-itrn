@@ -26,7 +26,7 @@ class ProductController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = $request->input('perPage', 5);
+        $perPage = $request->input('perPage', 60);
         $this->authorize('view', Product::class);
         $query = $this->productRepository
             ->builderQuery()
@@ -44,7 +44,7 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request): JsonResponse
     {
-        $this->authorize('create', Product::class);
+        // $this->authorize('create', Product::class);
         $validateData = $request->validated();
         $product = $this->productRepository->create($validateData);
 
@@ -58,7 +58,7 @@ class ProductController extends Controller
      */
     public function show(Product $product): JsonResponse
     {
-        $this->authorize('view', Product::class);
+        // $this->authorize('view', Product::class);
         $product = $this->productRepository->find($product);
 
         return $this->sendSuccess($product);
@@ -73,7 +73,7 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product): JsonResponse
     {
-        $this->authorize('update', $product);
+        // $this->authorize('update', $product);
         $validateData = $request->validated();
         $product = $this->productRepository->update($product, $validateData);
 
@@ -88,7 +88,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): JsonResponse
     {
-        $this->authorize('delete', $product);
+        // $this->authorize('delete', $product);
         $product->delete($product);
 
         return $this->deteled();

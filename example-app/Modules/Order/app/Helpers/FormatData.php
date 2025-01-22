@@ -36,6 +36,7 @@ class FormatData
                 'shipping_fee' => $order->shipping_fee ?? null,
                 'total_price' => $order->total_price ?? null,
                 'payment_method' => $order->payment_method ?? null,
+                'created_at' => $order->created_at->format('Y-m-d H:i:s') ?? null,
                 'order_item' => $order->orderItem->map(function ($item) {
                     return [
                         'id' => $item->id ?? null,
